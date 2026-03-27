@@ -65,30 +65,27 @@
   .submit-area { margin-top: 36px; background: var(--surface); border: 1px solid var(--border-bright); overflow: hidden; }
   .submit-topbar { padding: 12px 18px; background: var(--border); border-bottom: 1px solid var(--border-bright); font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.18em; text-transform: uppercase; }
   .submit-body { padding: 20px 24px; }
-  .submit-instruction { font-size: 13px; color: var(--text-dim); margin-bottom: 18px; line-height: 1.7; }
-  .submit-instruction strong { color: var(--text-bright); }
-  .submit-instruction code { font-family: var(--mono); font-size: 12px; background: var(--border); padding: 2px 6px; color: var(--accent); }
 
-  .btn-generate { font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 14px 32px; background: var(--accent); color: var(--bg); border: none; cursor: pointer; letter-spacing: 0.08em; transition: opacity 0.15s; width: 100%; }
+  .btn-generate { font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 16px 32px; background: var(--accent); color: var(--bg); border: none; cursor: pointer; letter-spacing: 0.08em; transition: opacity 0.15s; width: 100%; }
   .btn-generate:hover { opacity: 0.88; }
 
-  /* Output */
-  .output-wrap { margin-top: 20px; display: none; }
-  .output-panel { background: var(--bg); border: 1px solid var(--border-bright); }
-  .output-topbar { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; background: var(--border); border-bottom: 1px solid var(--border-bright); }
-  .output-label { font-family: var(--mono); font-size: 10px; color: var(--green); letter-spacing: 0.18em; text-transform: uppercase; }
-  .btn-copy { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 5px 14px; border: 1px solid var(--border-bright); background: var(--surface); color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
-  .btn-copy:hover { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
-  .btn-copy.copied { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
-  .output-body { padding: 18px 22px; font-family: var(--mono); font-size: 11.5px; line-height: 1.9; color: var(--text); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-bright) transparent; }
-  .output-body::-webkit-scrollbar { width: 4px; }
-  .output-body::-webkit-scrollbar-thumb { background: var(--border-bright); }
-
-  .btn-copy-big { width: 100%; margin-top: 12px; font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 16px; background: var(--green-dim); color: var(--green); border: 1px solid #34c46a60; cursor: pointer; letter-spacing: 0.08em; transition: all 0.15s; }
-  .btn-copy-big:hover { background: #34c46a25; border-color: var(--green); }
-  .btn-copy-big.copied { background: var(--green); color: var(--bg); border-color: var(--green); }
-  .paste-hint { margin-top: 14px; padding: 14px 18px; border: 1px solid #34c46a30; background: var(--green-dim); font-family: var(--mono); font-size: 11px; color: var(--green); line-height: 1.7; }
-  .paste-hint strong { color: #5ce88a; }
+  /* Ready state */
+  .ready-wrap { margin-top: 20px; display: none; }
+  .ready-card { background: var(--bg); border: 1px solid #34c46a60; }
+  .ready-topbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: var(--green-dim); border-bottom: 1px solid #34c46a30; }
+  .ready-label { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--green); letter-spacing: 0.15em; text-transform: uppercase; }
+  .ready-body { padding: 18px 22px; }
+  .ready-summary { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .ready-field { background: var(--surface); border: 1px solid var(--border-bright); padding: 10px 13px; }
+  .ready-field-label { font-family: var(--mono); font-size: 9px; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 4px; }
+  .ready-field-value { font-family: var(--mono); font-size: 12px; color: var(--text-bright); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ready-instruction { background: var(--surface); border: 1px solid var(--border-bright); border-left: 3px solid var(--accent); padding: 14px 16px; }
+  .ready-instruction p { font-family: var(--mono); font-size: 12px; color: var(--text-dim); line-height: 1.8; margin-bottom: 10px; }
+  .ready-instruction p:last-child { margin-bottom: 0; }
+  .ready-instruction strong { color: var(--text-bright); }
+  .ready-instruction code { background: var(--border); padding: 2px 7px; color: var(--accent); font-size: 12px; }
+  .btn-reset { width: 100%; margin-top: 14px; font-family: var(--mono); font-size: 11px; padding: 10px; background: transparent; color: var(--text-dim); border: 1px solid var(--border-bright); cursor: pointer; letter-spacing: 0.1em; transition: all 0.15s; }
+  .btn-reset:hover { color: var(--text-bright); border-color: var(--border-bright); background: var(--surface); }
 
   @media (max-width: 580px) { .cols-3 { grid-template-columns: 1fr 1fr; } }
 </style>
@@ -99,17 +96,15 @@
   <div class="header">
     <div class="header-label">Video Agent Pipeline</div>
     <h1>Video Brief Builder</h1>
-    <p>Fill in the form, click Generate, copy the output — paste it into Claude Code and all 4 agents run automatically.</p>
+    <p>Fill the form, click Run Pipeline, then type <code style="font-family:var(--mono);font-size:12px;background:var(--border);padding:2px 7px;color:var(--accent)">/video-run-pipeline</code> in Claude Code — prompts come straight back, no copy-paste.</p>
     <div class="how-it-works">
       <div class="how-step"><span>1</span> Fill form</div>
       <div class="how-arrow">→</div>
-      <div class="how-step"><span>2</span> Click Generate</div>
+      <div class="how-step"><span>2</span> Run Pipeline</div>
       <div class="how-arrow">→</div>
-      <div class="how-step"><span>3</span> Copy output</div>
+      <div class="how-step"><span>3</span> /video-run-pipeline</div>
       <div class="how-arrow">→</div>
-      <div class="how-step"><span>4</span> Paste into Claude Code</div>
-      <div class="how-arrow">→</div>
-      <div class="how-step"><span>5</span> Get all prompts</div>
+      <div class="how-step"><span>4</span> Paste into model</div>
     </div>
   </div>
 
@@ -180,6 +175,8 @@
       <div class="card" data-group="style" data-value="W1 — HISTORICAL / PERIOD" onclick="selectCard(this)"><div class="card-code">W1</div><div class="card-name">Historical / Period</div><div class="card-desc">Era-accurate, film burns, decade-locked palette.</div><div class="card-ref">Peaky Blinders · 1917 · The Crown</div></div>
       <div class="card" data-group="style" data-value="W2 — CYBERPUNK / NEO-FUTURE" onclick="selectCard(this)"><div class="card-code">W2</div><div class="card-name">Cyberpunk</div><div class="card-desc">Neon, chromatic aberration, teal/magenta, holographic UI.</div><div class="card-ref">Ghost in the Shell · Akira · Altered Carbon</div></div>
       <div class="card" data-group="style" data-value="W3 — BLACK MIRROR / NEAR-FUTURE" onclick="selectCard(this)"><div class="card-code">W3</div><div class="card-name">Black Mirror</div><div class="card-desc">Clinical, desaturated, sterile surfaces, threatening tech.</div><div class="card-ref">Black Mirror S3 · Ex Machina · Her</div></div>
+      <div class="card" data-group="style" data-value="W4 — CONTEMPORARY REAL" onclick="selectCard(this)"><div class="card-code">W4</div><div class="card-name">Contemporary Real</div><div class="card-desc">Modern naturalistic, zero stylization, present-day world as-is.</div><div class="card-ref">Normal People · Aftersun · The Bear</div></div>
+      <div class="card" data-group="style" data-value="W5 — RETRO / ANALOG" onclick="selectCard(this)"><div class="card-code">W5</div><div class="card-name">Retro / Analog</div><div class="card-desc">80s–90s VHS grain, oversaturated Kodachrome, CRT scanlines.</div><div class="card-ref">Stranger Things · Mandy · Paperhouse</div></div>
     </div>
     <div class="cat-label">Animation / Art Track</div>
     <div class="card-grid cols-3">
@@ -188,6 +185,8 @@
       <div class="card" data-group="style" data-value="A3 — ANIME" onclick="selectCard(this)"><div class="card-code">A3</div><div class="card-name">Anime</div><div class="card-desc">Speed lines, impact frames, cel-shaded, dramatic lighting.</div><div class="card-ref">Demon Slayer · Jujutsu Kaisen · Your Name</div></div>
       <div class="card" data-group="style" data-value="A4 — PICASSO / CUBIST" onclick="selectCard(this)"><div class="card-code">A4</div><div class="card-name">Picasso / Cubist</div><div class="card-desc">Fragmented geometry, bold flat color, black outlines.</div><div class="card-ref">Guernica · Gorillaz · Abstract MV</div></div>
       <div class="card" data-group="style" data-value="A5 — MOTION GRAPHICS" onclick="selectCard(this)"><div class="card-code">A5</div><div class="card-name">Motion Graphics</div><div class="card-desc">Vector shapes, typography in motion, 3-4 color values.</div><div class="card-ref">Apple reveals · Stripe · Kurzgesagt</div></div>
+      <div class="card" data-group="style" data-value="A6 — 3D REALISM / GAME ENGINE" onclick="selectCard(this)"><div class="card-code">A6</div><div class="card-name">3D Realism / Game Engine</div><div class="card-desc">Photorealistic CGI, Unreal Engine render quality, no cartoon softness.</div><div class="card-ref">The Mandalorian · Love Death + Robots · Arcane</div></div>
+      <div class="card" data-group="style" data-value="A7 — COMIC BOOK / GRAPHIC NOVEL" onclick="selectCard(this)"><div class="card-code">A7</div><div class="card-name">Comic Book / Graphic Novel</div><div class="card-desc">Bold ink outlines, halftone dots, Spider-Verse panel energy.</div><div class="card-ref">Into the Spider-Verse · Sin City · Scott Pilgrim</div></div>
     </div>
     <div class="cat-label">Director Mode Track</div>
     <div class="card-grid cols-2">
@@ -195,6 +194,17 @@
       <div class="card" data-group="style" data-value="D2 — FINCHER MODE" onclick="selectCard(this)"><div class="card-code">D2</div><div class="card-name">Fincher Mode</div><div class="card-desc">Cold, precise, clinical. No handheld. Desaturated green-grey.</div><div class="card-ref">Fight Club · Gone Girl · The Social Network</div></div>
       <div class="card" data-group="style" data-value="D3 — WES ANDERSON MODE" onclick="selectCard(this)"><div class="card-code">D3</div><div class="card-name">Wes Anderson Mode</div><div class="card-desc">Perfect symmetry, pastel palette, flat deadpan, whip-pans.</div><div class="card-ref">Grand Budapest Hotel · Asteroid City</div></div>
       <div class="card" data-group="style" data-value="D4 — A24 MODE" onclick="selectCard(this)"><div class="card-code">D4</div><div class="card-name">A24 Mode</div><div class="card-desc">Intimate, uncomfortable, handheld, natural light extremes.</div><div class="card-ref">Midsommar · Moonlight · Lady Bird</div></div>
+    </div>
+  </div>
+
+  <!-- Video Model -->
+  <div class="form-group">
+    <div class="form-label">Video Model</div>
+    <div class="card-grid cols-2">
+      <div class="card" data-group="model" data-value="Higgsfield" onclick="selectCard(this)"><div class="card-code">HF</div><div class="card-name">Higgsfield</div><div class="card-desc">High-motion, physics, kinetic action, multi-subject chaos.</div></div>
+      <div class="card" data-group="model" data-value="Seedance 2" onclick="selectCard(this)"><div class="card-code">SD</div><div class="card-name">Seedance 2</div><div class="card-desc">Photorealistic human movement, lifestyle, UGC authenticity.</div></div>
+      <div class="card" data-group="model" data-value="Kling" onclick="selectCard(this)"><div class="card-code">KL</div><div class="card-name">Kling</div><div class="card-desc">Character consistency, animation styles, close-up face detail.</div></div>
+      <div class="card" data-group="model" data-value="VEO" onclick="selectCard(this)"><div class="card-code">VE</div><div class="card-name">VEO</div><div class="card-desc">Emotion, micro-expression, cinematic narrative detail.</div></div>
     </div>
   </div>
 
@@ -207,24 +217,24 @@
 
   <!-- Submit -->
   <div class="submit-area">
-    <div class="submit-topbar">Ready to run the pipeline</div>
+    <div class="submit-topbar">Run the pipeline</div>
     <div class="submit-body">
-      <div class="submit-instruction">
-        Click <strong>Generate</strong> to build your complete pipeline input.<br>
-        Then <strong>copy it</strong> and <strong>paste into Claude Code</strong> — all 4 agents will run automatically and output your final video prompts.
-      </div>
-      <button class="btn-generate" onclick="generate()">Generate Pipeline Input →</button>
-      <div class="output-wrap" id="output-wrap">
-        <div class="output-panel">
-          <div class="output-topbar">
-            <span class="output-label">✓ Pipeline Input Ready</span>
-            <button class="btn-copy" id="copy-btn" onclick="copyOutput(this)">⌘ Copy</button>
+      <button class="btn-generate" id="btn-run" onclick="prepare()">▶ Run Pipeline</button>
+      <div class="ready-wrap" id="ready-wrap">
+        <div class="ready-card">
+          <div class="ready-topbar">
+            <span class="ready-label">✓ Pipeline Ready</span>
+            <span style="font-family:var(--mono);font-size:10px;color:#5ce88a;" id="ready-model-badge"></span>
           </div>
-          <div class="output-body" id="output-body"></div>
-        </div>
-        <button class="btn-copy-big" id="copy-btn-big" onclick="copyOutput(this)">⌘ Copy Prompt — Paste into Claude Code</button>
-        <div class="paste-hint">
-          <strong>Next step:</strong> Click Copy above → switch to Claude Code → paste → all 4 agents run automatically.
+          <div class="ready-body">
+            <div class="ready-summary" id="ready-summary"></div>
+            <div class="ready-instruction">
+              <p>Brief is locked. Switch to <strong>Claude Code</strong> and type:</p>
+              <p><code>/video-run-pipeline</code></p>
+              <p>Claude will read this form directly and output your final shot prompts — no copy-paste needed.</p>
+            </div>
+            <button class="btn-reset" onclick="reset()">← Edit Brief</button>
+          </div>
         </div>
       </div>
     </div>
@@ -245,20 +255,21 @@
     return el ? el.dataset.value : null;
   }
 
-  function generate() {
-    const appname   = document.getElementById('appname').value.trim();
-    const appdesc   = document.getElementById('appdesc').value.trim();
-    const audience  = document.getElementById('audience').value.trim();
-    const keymsg    = document.getElementById('keymessage').value.trim();
-    const feature   = document.getElementById('feature').value.trim();
-    const platform  = getVal('platform');
+  function prepare() {
+    const appname    = document.getElementById('appname').value.trim();
+    const appdesc    = document.getElementById('appdesc').value.trim();
+    const audience   = document.getElementById('audience').value.trim();
+    const keymsg     = document.getElementById('keymessage').value.trim();
+    const feature    = document.getElementById('feature').value.trim();
+    const platform   = getVal('platform');
     const platformEl = document.querySelector('[data-group="platform"].selected');
-    const ratio     = platformEl ? platformEl.dataset.ratio : '';
-    const res       = platformEl ? platformEl.dataset.res : '';
-    const length    = getVal('length');
-    const videotype = getVal('videotype');
-    const tone      = getVal('tone');
-    const style     = getVal('style');
+    const ratio      = platformEl ? platformEl.dataset.ratio : '';
+    const res        = platformEl ? platformEl.dataset.res : '';
+    const length     = getVal('length');
+    const videotype  = getVal('videotype');
+    const tone       = getVal('tone');
+    const style      = getVal('style');
+    const model      = getVal('model');
 
     const missing = [];
     if (!appname)   missing.push('App name');
@@ -268,159 +279,45 @@
     if (!videotype) missing.push('Video type');
     if (!tone)      missing.push('Tone');
     if (!style)     missing.push('Visual style');
+    if (!model)     missing.push('Video model');
     if (!audience)  missing.push('Target audience');
     if (!keymsg)    missing.push('Key message');
     if (missing.length) { alert('Please complete: ' + missing.join(', ')); return; }
 
-    const output = `RUN VIDEO PIPELINE — ALL 4 AGENTS
+    // Store brief for Claude to read via Chrome extension
+    window.pipelineData = {
+      appname, appdesc, platform, ratio, res,
+      length, videotype, tone, style, model,
+      audience, keymsg,
+      feature: feature || 'None — build around core emotional benefit',
+      ready: true,
+      timestamp: new Date().toISOString()
+    };
 
-You are running a 4-agent video production pipeline. Using the brief below, execute ALL agents in sequence:
-1. Creative Director — build the creative brief
-2. Style Director — lock the visual language
-3. Cinematographer — write the full shot list (all 15 fields per shot, no shortcuts)
-4. Prompt Packager — output production-ready prompts for every shot, formatted for the assigned model
+    // Build summary card
+    const fields = [
+      ['App', appname],
+      ['Platform', platform],
+      ['Length', length],
+      ['Type', videotype],
+      ['Tone', tone],
+      ['Style', style],
+      ['Audience', audience],
+    ];
+    document.getElementById('ready-summary').innerHTML = fields.map(([l, v]) =>
+      `<div class="ready-field"><div class="ready-field-label">${l}</div><div class="ready-field-value" title="${v}">${v}</div></div>`
+    ).join('');
+    document.getElementById('ready-model-badge').textContent = '→ ' + model;
 
-Output all 4 results in full. Do not stop early.
-
-════════════════════════════════════════════════════════
-PROJECT INPUTS
-════════════════════════════════════════════════════════
-
-APP NAME       : ${appname}
-DESCRIPTION    : ${appdesc}
-PLATFORM       : ${platform}
-ASPECT RATIO   : ${ratio}
-RESOLUTION     : ${res}
-VIDEO LENGTH   : ${length}
-VIDEO TYPE     : ${videotype}
-TONE           : ${tone}
-VISUAL STYLE   : ${style}
-TARGET AUDIENCE: ${audience}
-KEY MESSAGE    : ${keymsg}
-FEATURE        : ${feature || 'None — build around core emotional benefit'}
-
-════════════════════════════════════════════════════════
-AGENT 01 — CREATIVE DIRECTOR
-════════════════════════════════════════════════════════
-
-Using the inputs above, output a complete Creative Brief:
-- PROJECT TITLE
-- PLATFORM & SPECS (with safe zone)
-- VIDEO TYPE
-- CONCEPT (2-3 sentences, specific not generic)
-- EMOTIONAL ARC (timestamps that add up exactly to ${length})
-- HOOK STRATEGY (type + execution — make it stop a scrolling thumb cold)
-- TONE PROFILE (4 specific directives for this project)
-- TARGET AUDIENCE (+ inferred psychological pain point)
-- KEY MESSAGE
-- SHOT COUNT TARGET (based on ${length})
-- MUSIC DIRECTION (genre + BPM + entry point)
-- HANDOFF NOTES FOR STYLE DIRECTOR
-
-STEALTH PROMO rule: product must not appear before the halfway point.
-Hook must be specific to this app and audience — generic hooks are a failure state.
-
-════════════════════════════════════════════════════════
-AGENT 02 — STYLE DIRECTOR
-════════════════════════════════════════════════════════
-
-Selected style: ${style}
-
-Using the Creative Brief from Agent 01, output the full Visual Language Spec:
-- COLOR WORLD (3-4 specific palette anchors, grade direction, forbidden colors)
-- LENS & CAMERA (type, focal range, depth of field, artifacts, fps)
-- LIGHTING (source, quality, time of day, 3 mood anchors, what to avoid)
-- MOTION RULES (movement types, energy, transitions, slow-mo use)
-- TEXTURE & FINISH (grain %, artifacts, surface quality, era feel)
-- SOUND DESIGN LANGUAGE (4 specific directives)
-- VISUAL REFERENCES (3 specific scene references — film + year + what it demonstrates)
-- MODEL ROUTING (Higgsfield / Seedance 2 / Kling / VEO — with exact shot types for each)
-- STYLE ANCHOR PHRASE (single phrase appended to every prompt)
-- HANDOFF NOTES FOR CINEMATOGRAPHER
-
-References beat adjectives. Name specific scenes. "Moody" is not acceptable.
-Model routing is decided here — not in Agent 04.
-
-════════════════════════════════════════════════════════
-AGENT 03 — CINEMATOGRAPHER
-════════════════════════════════════════════════════════
-
-Using the Creative Brief and Visual Language Spec, build the complete shot list.
-
-Shot count targets: 15s=8-12 shots, 30s=15-22 shots, 60s=28-40 shots, 90s+=45-60 shots
-Distribution: 35% CU/ECU, 30% MS/MCU, 20% WS/MWS, 15% INSERT/POV/CUT
-
-Every shot uses this exact structure — no blanks, no TBDs:
-
-SHOT [number] — [HOOK / BUILD / PLANT / PAYOFF]
-DURATION      : [seconds]
-SHOT TYPE     : [ECU/CU/MCU/MS/MWS/WS/EWS/POV/OTS/INSERT/CUT/MATCH]
-LENS          : [focal length + aperture]
-CAMERA        : [movement + speed + direction]
-FRAME         : [exact composition — what occupies each third]
-SUBJECT       : [precise physical description — no names]
-ACTION        : [what subject is doing at this exact moment]
-EXPRESSION    : [emotional micro-detail — pupils, jaw, brow, posture]
-LIGHTING      : [source / quality / direction / color temp / shadows]
-BACKGROUND    : [what is behind, focus level, movement]
-FOREGROUND    : [anything between lens and subject — or "none"]
-AUDIO         : [dialogue / VO / sound design / music state]
-EMOTIONAL BEAT: [one precise emotion the viewer feels]
-MODEL         : [Higgsfield / Seedance 2 / Kling / VEO]
-PROMPT NOTES  : [anything unusual the Prompt Packager must know]
-
-Rules:
-- Shot 1 executes the Hook Strategy exactly — no establishing shots
-- STEALTH PROMO: product not visible before halfway
-- Final shot holds 1.5–2.5s longer, no hard cut to black
-- Subject description locked in Shot 1, copy-pasted exactly every subsequent shot
-
-════════════════════════════════════════════════════════
-AGENT 04 — PROMPT PACKAGER
-════════════════════════════════════════════════════════
-
-For every shot in the shot list, output a production-ready prompt:
-
-SHOT [number] — [ARC PHASE]
-MODEL        : [model]
-DURATION     : [seconds]
-ASPECT RATIO : ${ratio}
-PROMPT:
-[Full prompt for the assigned model — apply style anchor phrase as last line]
-
-NEGATIVE PROMPT:
-[3-5 specific items tailored to this shot's failure risk]
-
-CONSISTENCY NOTE:
-[Character anchor for Kling / Environment persistence for same-scene shots]
-
-Model grammars:
-- HIGGSFIELD (4-6 sentences): Environment+lighting → Subject+position → Physics: direction/speed/arc/impact → Camera → Secondary reactions → Audio
-- SEEDANCE 2 (3-5 sentences): Time+light+environment → Subject as casting+costume brief → Natural action → Micro-detail → Camera+lens → Atmosphere+audio
-- KLING (3-5 sentences): Locked character anchor (copy-paste verbatim) → Anatomical expression → Environment → Camera → Style name stated explicitly → Audio
-- VEO (2-4 sentences): Cinematic camera move → Subject micro-expression detail → Scene atmosphere → Sound design layered
-
-End with DELIVERY SUMMARY:
-- Total shots per model
-- Generation order (Kling → Seedance 2 → Higgsfield → VEO)
-- Locked character anchor descriptions for the editor`;
-
-    document.getElementById('output-body').textContent = output;
-    document.getElementById('output-wrap').style.display = 'block';
-    document.getElementById('output-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('btn-run').style.display = 'none';
+    document.getElementById('ready-wrap').style.display = 'block';
+    document.getElementById('ready-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  function copyOutput(btn) {
-    const text = document.getElementById('output-body').textContent;
-    const isBig = btn.id === 'copy-btn-big';
-    navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '✓ Copied! Now paste into Claude Code';
-      btn.classList.add('copied');
-      setTimeout(() => {
-        btn.textContent = isBig ? '⌘ Copy Prompt — Paste into Claude Code' : '⌘ Copy';
-        btn.classList.remove('copied');
-      }, 3000);
-    });
+  function reset() {
+    window.pipelineData = null;
+    document.getElementById('btn-run').style.display = 'block';
+    document.getElementById('ready-wrap').style.display = 'none';
   }
 </script>
 </body>
