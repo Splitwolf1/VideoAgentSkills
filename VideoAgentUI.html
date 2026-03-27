@@ -88,25 +88,54 @@
   .btn-reset:hover { color: var(--text-bright); border-color: var(--border-bright); background: var(--surface); }
 
   @media (max-width: 580px) { .cols-3 { grid-template-columns: 1fr 1fr; } }
+
+  /* Tabs */
+  .tab-bar { display: flex; gap: 0; margin-bottom: 32px; border: 1px solid var(--border-bright); }
+  .tab-btn { flex: 1; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 12px 16px; background: var(--surface); color: var(--text-dim); border: none; cursor: pointer; letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.15s; border-right: 1px solid var(--border-bright); }
+  .tab-btn:last-child { border-right: none; }
+  .tab-btn:hover { color: var(--text-bright); background: var(--accent-dim); }
+  .tab-btn.active { background: var(--accent-dim); color: var(--accent); border-bottom: 2px solid var(--accent); }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* Mobile-specific */
+  .moment-tag { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; padding: 6px 12px; border: 1px solid var(--border-bright); background: var(--surface); color: var(--text-dim); cursor: pointer; user-select: none; transition: all 0.15s; margin: 3px; }
+  .moment-tag:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .moment-tag.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .moment-tag .remove { font-size: 13px; line-height: 1; opacity: 0.6; }
+  .moment-input-row { display: flex; gap: 8px; margin-top: 10px; }
+  .moment-input-row input { flex: 1; }
+  .btn-add-moment { font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 11px 18px; background: var(--surface); color: var(--accent); border: 1px solid var(--border-bright); cursor: pointer; white-space: nowrap; transition: all 0.15s; }
+  .btn-add-moment:hover { background: var(--accent-dim); border-color: var(--accent); }
+  .moments-wrap { min-height: 44px; padding: 8px; border: 1px solid var(--border-bright); background: var(--bg); display: flex; flex-wrap: wrap; align-items: flex-start; }
 </style>
 </head>
 <body>
 <div class="app">
 
   <div class="header">
-    <div class="header-label">Video Agent Pipeline</div>
-    <h1>Video Brief Builder</h1>
-    <p>Fill the form, click Run Pipeline, then type <code style="font-family:var(--mono);font-size:12px;background:var(--border);padding:2px 7px;color:var(--accent)">/video-run-pipeline</code> in Claude Code — prompts come straight back, no copy-paste.</p>
+    <div class="header-label">AI Content Pipeline</div>
+    <h1>Brief Builder</h1>
+    <p>Fill the form, click Run Pipeline, then type the command in Claude Code — prompts come straight back, no copy-paste.</p>
     <div class="how-it-works">
       <div class="how-step"><span>1</span> Fill form</div>
       <div class="how-arrow">→</div>
       <div class="how-step"><span>2</span> Run Pipeline</div>
       <div class="how-arrow">→</div>
-      <div class="how-step"><span>3</span> /video-run-pipeline</div>
+      <div class="how-step"><span>3</span> /run command</div>
       <div class="how-arrow">→</div>
       <div class="how-step"><span>4</span> Paste into model</div>
     </div>
   </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('video', this)">▶ Video Production</button>
+    <button class="tab-btn" onclick="switchTab('mobile', this)">✦ Mobile Animation</button>
+  </div>
+
+  <!-- ═══ VIDEO TAB ═══ -->
+  <div class="tab-pane active" id="tab-video">
 
   <!-- App Info -->
   <div class="form-group"><div class="form-label">App / Product Name</div><input type="text" id="appname" placeholder="e.g. Lumora" /></div>
@@ -240,8 +269,135 @@
     </div>
   </div>
 
+  </div><!-- /tab-video -->
+
+  <!-- ═══ MOBILE ANIMATION TAB ═══ -->
+  <div class="tab-pane" id="tab-mobile">
+
+    <!-- App Info -->
+    <div class="form-group"><div class="form-label">App / Product Name</div><input type="text" id="m-appname" placeholder="e.g. TinySteps Baby Tracker" /></div>
+    <div class="form-group"><div class="form-label">What does it do? <span class="optional">one sentence</span></div><input type="text" id="m-appdesc" placeholder="e.g. A baby tracker app for logging feeds, naps, and diaper changes" /></div>
+    <hr>
+
+    <!-- Animation Moments -->
+    <div class="form-group">
+      <div class="form-label">Animation Moments <span class="optional">select all that apply + add your own</span></div>
+      <div class="moments-wrap" id="moments-wrap">
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Log Feed">Log Feed</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Start Nap">Start Nap</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Diaper Change">Diaper Change</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Milestone Reached">Milestone Reached</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Streak Celebration">Streak Celebration</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Loading / Idle">Loading / Idle</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Empty State">Empty State</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Onboarding Welcome">Onboarding Welcome</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Timer Running">Timer Running</span>
+        <span class="moment-tag" onclick="toggleMoment(this)" data-value="Goal Complete">Goal Complete</span>
+      </div>
+      <div class="moment-input-row">
+        <input type="text" id="moment-custom" placeholder="Add a custom moment..." onkeydown="if(event.key==='Enter')addMoment()" />
+        <button class="btn-add-moment" onclick="addMoment()">+ Add</button>
+      </div>
+    </div>
+
+    <!-- Style -->
+    <div class="form-group">
+      <div class="form-label">Animation Style</div>
+      <div class="card-grid cols-2">
+        <div class="card" data-group="m-style" data-value="DUOLINGO BOUNCY" onclick="selectCard(this)"><div class="card-code">S1</div><div class="card-name">Duolingo Bouncy</div><div class="card-desc">Expressive characters, exaggerated squash/stretch, celebration energy.</div><div class="card-ref">Duolingo owl · Headspace · Calm</div></div>
+        <div class="card" data-group="m-style" data-value="PIXAR SOFT" onclick="selectCard(this)"><div class="card-code">S2</div><div class="card-name">Pixar Soft</div><div class="card-desc">Subsurface 3D, emotional eyes, warm and cinematic but playful.</div><div class="card-ref">Soul · Turning Red · Inside Out</div></div>
+        <div class="card" data-group="m-style" data-value="FLAT VECTOR" onclick="selectCard(this)"><div class="card-code">S3</div><div class="card-name">Flat Vector</div><div class="card-desc">Clean 2D shapes, no gradients, graphic and modern icon energy.</div><div class="card-ref">Notion · Linear · Stripe icons</div></div>
+        <div class="card" data-group="m-style" data-value="PASTEL CUTE" onclick="selectCard(this)"><div class="card-code">S4</div><div class="card-name">Pastel Cute</div><div class="card-desc">Soft colors, rounded everything, gentle and kawaii-adjacent warmth.</div><div class="card-ref">Pokémon GO items · Bear apps · Finch</div></div>
+        <div class="card" data-group="m-style" data-value="BOLD GRAPHIC" onclick="selectCard(this)"><div class="card-code">S5</div><div class="card-name">Bold Graphic</div><div class="card-desc">High contrast, thick outlines, comic energy, punchy and loud.</div><div class="card-ref">Clash of Clans · Supercell · Brawl Stars</div></div>
+      </div>
+    </div>
+
+    <!-- Character Type -->
+    <div class="form-group">
+      <div class="form-label">Character Type</div>
+      <div class="card-grid cols-3">
+        <div class="card" data-group="m-chartype" data-value="MASCOT" onclick="selectCard(this)"><div class="card-name">Mascot</div><div class="card-desc">A recurring character who owns every animation — the app's face.</div></div>
+        <div class="card" data-group="m-chartype" data-value="ICON SET" onclick="selectCard(this)"><div class="card-name">Icon Set</div><div class="card-desc">Individual animated icons per action, no recurring character.</div></div>
+        <div class="card" data-group="m-chartype" data-value="HYBRID" onclick="selectCard(this)"><div class="card-name">Hybrid</div><div class="card-desc">A mascot who interacts with and reacts to the icons.</div></div>
+      </div>
+    </div>
+
+    <!-- Mascot description (shown when Mascot or Hybrid selected) -->
+    <div class="form-group"><div class="form-label">Mascot / Character Idea <span class="optional">optional — describe or leave blank for Claude to create</span></div><textarea id="m-mascot" placeholder="e.g. A chubby baby with big sparkly eyes and stubby arms, wears a tiny diaper, soft cream color"></textarea></div>
+
+    <!-- Background -->
+    <div class="form-group">
+      <div class="form-label">Background</div>
+      <div class="card-grid cols-3">
+        <div class="card" data-group="m-bg" data-value="TRANSPARENT" onclick="selectCard(this)"><div class="card-name">Transparent</div><div class="card-desc">For overlay use directly in app.</div></div>
+        <div class="card" data-group="m-bg" data-value="WHITE" onclick="selectCard(this)"><div class="card-name">White</div><div class="card-desc">Clean product-style, works anywhere.</div></div>
+        <div class="card" data-group="m-bg" data-value="APP COLOR" onclick="selectCard(this)"><div class="card-name">App Color</div><div class="card-desc">Matches the app's brand palette.</div></div>
+      </div>
+    </div>
+
+    <!-- Loop + Aspect -->
+    <div class="form-group">
+      <div class="form-label">Default Loop Type</div>
+      <div class="card-grid cols-3">
+        <div class="card" data-group="m-loop" data-value="SEAMLESS LOOP" onclick="selectCard(this)"><div class="card-name">Seamless Loop</div><div class="card-desc">Cycles indefinitely — idle states, loading.</div></div>
+        <div class="card" data-group="m-loop" data-value="ONE-SHOT" onclick="selectCard(this)"><div class="card-name">One-Shot</div><div class="card-desc">Plays once then holds — celebrations, confirmations.</div></div>
+        <div class="card" data-group="m-loop" data-value="BOUNCE LOOP" onclick="selectCard(this)"><div class="card-name">Bounce Loop</div><div class="card-desc">Forward then reverses — subtle idle breathing.</div></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <div class="form-label">Output Format</div>
+      <div class="pill-group">
+        <div class="pill" data-group="m-aspect" data-value="1:1 Square (512×512)" onclick="selectPill(this)">1:1 Square</div>
+        <div class="pill" data-group="m-aspect" data-value="9:16 Portrait (1080×1920)" onclick="selectPill(this)">9:16 Portrait</div>
+        <div class="pill" data-group="m-aspect" data-value="4:5 Feed (1080×1350)" onclick="selectPill(this)">4:5 Feed</div>
+      </div>
+    </div>
+
+    <hr>
+
+    <!-- Palette & Message -->
+    <div class="form-group"><div class="form-label">App Color Palette <span class="optional">hex codes or describe</span></div><input type="text" id="m-palette" placeholder="e.g. #FFD6E0 soft pink, #C7EFCF mint green, #FFF9C4 warm yellow" /></div>
+    <div class="form-group"><div class="form-label">Emotional Tone <span class="optional">how should the user feel when they see these?</span></div><input type="text" id="m-emotion" placeholder="e.g. Proud, warm, like celebrating tiny wins with their baby" /></div>
+
+    <!-- Submit -->
+    <div class="submit-area">
+      <div class="submit-topbar">Run the animation pipeline</div>
+      <div class="submit-body">
+        <button class="btn-generate" id="m-btn-run" onclick="mPrepare()">✦ Run Animation Pipeline</button>
+        <div class="ready-wrap" id="m-ready-wrap">
+          <div class="ready-card">
+            <div class="ready-topbar">
+              <span class="ready-label">✓ Animation Brief Ready</span>
+              <span style="font-family:var(--mono);font-size:10px;color:#5ce88a;" id="m-ready-badge"></span>
+            </div>
+            <div class="ready-body">
+              <div class="ready-summary" id="m-ready-summary"></div>
+              <div class="ready-instruction">
+                <p>Brief is locked. Switch to <strong>Claude Code</strong> and type:</p>
+                <p><code>/mobile-run-pipeline</code></p>
+                <p>Claude reads the form, builds your character anchor, and outputs one Higgsfield prompt per animation moment — ready to generate.</p>
+              </div>
+              <button class="btn-reset" onclick="mReset()">← Edit Brief</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-mobile -->
+
 </div>
 <script>
+  // ── Tab switching ──
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  // ── Shared card/pill helpers ──
   function selectCard(el) {
     document.querySelectorAll(`.card[data-group="${el.dataset.group}"]`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
@@ -253,6 +409,86 @@
   function getVal(group) {
     const el = document.querySelector(`[data-group="${group}"].selected`);
     return el ? el.dataset.value : null;
+  }
+
+  // ── Mobile: animation moments ──
+  function toggleMoment(el) {
+    el.classList.toggle('selected');
+  }
+  function addMoment() {
+    const input = document.getElementById('moment-custom');
+    const val = input.value.trim();
+    if (!val) return;
+    const wrap = document.getElementById('moments-wrap');
+    const tag = document.createElement('span');
+    tag.className = 'moment-tag selected';
+    tag.dataset.value = val;
+    tag.onclick = function() { toggleMoment(this); };
+    tag.textContent = val;
+    wrap.appendChild(tag);
+    input.value = '';
+  }
+  function getSelectedMoments() {
+    return Array.from(document.querySelectorAll('#moments-wrap .moment-tag.selected')).map(t => t.dataset.value);
+  }
+
+  // ── Mobile: prepare pipeline ──
+  function mPrepare() {
+    const appname  = document.getElementById('m-appname').value.trim();
+    const appdesc  = document.getElementById('m-appdesc').value.trim();
+    const mascot   = document.getElementById('m-mascot').value.trim();
+    const palette  = document.getElementById('m-palette').value.trim();
+    const emotion  = document.getElementById('m-emotion').value.trim();
+    const style    = getVal('m-style');
+    const chartype = getVal('m-chartype');
+    const bg       = getVal('m-bg');
+    const loop     = getVal('m-loop');
+    const aspect   = getVal('m-aspect');
+    const moments  = getSelectedMoments();
+
+    const missing = [];
+    if (!appname)         missing.push('App name');
+    if (!appdesc)         missing.push('App description');
+    if (!moments.length)  missing.push('Animation moments');
+    if (!style)           missing.push('Animation style');
+    if (!chartype)        missing.push('Character type');
+    if (!bg)              missing.push('Background');
+    if (!loop)            missing.push('Loop type');
+    if (!aspect)          missing.push('Output format');
+    if (!palette)         missing.push('Color palette');
+    if (!emotion)         missing.push('Emotional tone');
+    if (missing.length) { alert('Please complete: ' + missing.join(', ')); return; }
+
+    window.mobilePipelineData = {
+      appname, appdesc, mascot, palette, emotion,
+      style, chartype, bg, loop, aspect,
+      animationMoments: moments,
+      ready: true,
+      timestamp: new Date().toISOString()
+    };
+
+    const fields = [
+      ['App', appname],
+      ['Style', style],
+      ['Character', chartype],
+      ['Loop', loop],
+      ['Format', aspect],
+      ['Moments', moments.length + ' selected'],
+    ];
+    document.getElementById('m-ready-summary').innerHTML = fields.map(([l, v]) =>
+      `<div class="ready-field"><div class="ready-field-label">${l}</div><div class="ready-field-value" title="${v}">${v}</div></div>`
+    ).join('');
+    document.getElementById('m-ready-badge').textContent = moments.length + ' animations';
+
+    document.getElementById('m-btn-run').style.display = 'none';
+    document.getElementById('m-ready-wrap').style.display = 'block';
+    document.getElementById('m-ready-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function mReset() {
+    window.mobilePipelineData = null;
+    document.getElementById('m-btn-run').style.display = 'block';
+    document.getElementById('m-ready-wrap').style.display = 'none';
   }
 
   function prepare() {
