@@ -89,6 +89,23 @@
 
   @media (max-width: 580px) { .cols-3 { grid-template-columns: 1fr 1fr; } }
 
+  /* Reference section */
+  .ref-toggle-bar { display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--surface); border: 1px solid var(--border-bright); cursor: pointer; user-select: none; transition: all 0.15s; }
+  .ref-toggle-bar:hover { border-color: var(--accent); background: var(--accent-dim); }
+  .ref-toggle-bar.open { border-color: var(--accent); background: var(--accent-dim); border-bottom: none; }
+  .ref-toggle-icon { font-family: var(--mono); font-size: 16px; color: var(--accent); width: 20px; text-align: center; }
+  .ref-toggle-text { font-family: var(--mono); font-size: 11px; font-weight: 700; color: var(--text-bright); letter-spacing: 0.1em; text-transform: uppercase; }
+  .ref-toggle-sub { font-size: 11px; color: var(--text-dim); margin-left: auto; }
+  .ref-body { display: none; border: 1px solid var(--accent); border-top: none; background: var(--bg); padding: 18px 18px 6px; margin-bottom: 24px; }
+  .ref-body.open { display: block; }
+  .ref-preview { margin-top: 10px; display: none; }
+  .ref-preview img, .ref-preview video { max-width: 100%; max-height: 180px; border: 1px solid var(--border-bright); display: block; }
+  .ref-preview-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); margin-bottom: 6px; letter-spacing: 0.1em; }
+  .ref-clear { font-family: var(--mono); font-size: 10px; color: var(--red); background: none; border: none; cursor: pointer; padding: 4px 0; margin-top: 6px; display: block; }
+  input[type="file"] { display: none; }
+  .btn-upload { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 9px 16px; background: var(--surface); color: var(--text-dim); border: 1px solid var(--border-bright); cursor: pointer; transition: all 0.15s; margin-top: 8px; display: inline-block; }
+  .btn-upload:hover { color: var(--accent); border-color: var(--accent); background: var(--accent-dim); }
+
   /* Tabs */
   .tab-bar { display: flex; gap: 0; margin-bottom: 32px; border: 1px solid var(--border-bright); }
   .tab-btn { flex: 1; font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 12px 16px; background: var(--surface); color: var(--text-dim); border: none; cursor: pointer; letter-spacing: 0.12em; text-transform: uppercase; transition: all 0.15s; border-right: 1px solid var(--border-bright); }
@@ -244,6 +261,38 @@
   <div class="form-group"><div class="form-label">Key Message <span class="optional">what should viewer feel or do?</span></div><textarea id="keymessage" placeholder="e.g. Feel like this app finally gets how their brain works and download it immediately"></textarea></div>
   <div class="form-group"><div class="form-label">Feature to Highlight <span class="optional">optional</span></div><textarea id="feature" placeholder="e.g. The AI mood detection on the home screen"></textarea></div>
 
+  <!-- Reference -->
+  <div class="ref-toggle-bar" id="ref-toggle" onclick="toggleRef('v')">
+    <span class="ref-toggle-icon" id="v-ref-icon">+</span>
+    <span class="ref-toggle-text">Add Reference Image / Video</span>
+    <span class="ref-toggle-sub">optional — photo, video clip, or URL</span>
+  </div>
+  <div class="ref-body" id="v-ref-body">
+    <div class="form-group">
+      <div class="form-label">Reference Type</div>
+      <div class="card-grid cols-2">
+        <div class="card" data-group="v-reftype" data-value="CHARACTER REFERENCE" onclick="selectCard(this)"><div class="card-code">CR</div><div class="card-name">Character Reference</div><div class="card-desc">Lock the subject's face, body, or look across all shots.</div></div>
+        <div class="card" data-group="v-reftype" data-value="STYLE REFERENCE" onclick="selectCard(this)"><div class="card-code">SR</div><div class="card-name">Style Reference</div><div class="card-desc">Match the visual language, grade, or cinematography.</div></div>
+        <div class="card" data-group="v-reftype" data-value="SCENE / LOCATION" onclick="selectCard(this)"><div class="card-code">SL</div><div class="card-name">Scene / Location</div><div class="card-desc">Reproduce a specific environment or setting.</div></div>
+        <div class="card" data-group="v-reftype" data-value="PRODUCT / UI" onclick="selectCard(this)"><div class="card-code">PU</div><div class="card-name">Product / UI</div><div class="card-desc">Show the actual app screen or product accurately.</div></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Reference URL <span class="optional">paste image or video URL</span></div>
+      <input type="text" id="v-ref-url" placeholder="https://..." oninput="previewRefUrl('v')" />
+    </div>
+    <div class="form-group">
+      <div class="form-label">Or upload a local file</div>
+      <label class="btn-upload" for="v-ref-file">⬆ Choose File</label>
+      <input type="file" id="v-ref-file" accept="image/*,video/*" onchange="previewRefFile('v', this)" />
+      <div class="ref-preview" id="v-ref-preview"></div>
+    </div>
+    <div class="form-group">
+      <div class="form-label">Reference Note <span class="optional">what should Claude pull from this reference?</span></div>
+      <input type="text" id="v-ref-note" placeholder="e.g. Match her exact face and auburn hair / Match the teal-green grade and anamorphic flares" />
+    </div>
+  </div>
+
   <!-- Submit -->
   <div class="submit-area">
     <div class="submit-topbar">Run the pipeline</div>
@@ -360,6 +409,38 @@
     <div class="form-group"><div class="form-label">App Color Palette <span class="optional">hex codes or describe</span></div><input type="text" id="m-palette" placeholder="e.g. #FFD6E0 soft pink, #C7EFCF mint green, #FFF9C4 warm yellow" /></div>
     <div class="form-group"><div class="form-label">Emotional Tone <span class="optional">how should the user feel when they see these?</span></div><input type="text" id="m-emotion" placeholder="e.g. Proud, warm, like celebrating tiny wins with their baby" /></div>
 
+    <!-- Reference -->
+    <div class="ref-toggle-bar" id="m-ref-toggle" onclick="toggleRef('m')">
+      <span class="ref-toggle-icon" id="m-ref-icon">+</span>
+      <span class="ref-toggle-text">Add Reference Image / Video</span>
+      <span class="ref-toggle-sub">optional — character art, icon style, app screenshot</span>
+    </div>
+    <div class="ref-body" id="m-ref-body">
+      <div class="form-group">
+        <div class="form-label">Reference Type</div>
+        <div class="card-grid cols-2">
+          <div class="card" data-group="m-reftype" data-value="CHARACTER REFERENCE" onclick="selectCard(this)"><div class="card-code">CR</div><div class="card-name">Character Reference</div><div class="card-desc">Lock mascot appearance across all animation moments.</div></div>
+          <div class="card" data-group="m-reftype" data-value="STYLE REFERENCE" onclick="selectCard(this)"><div class="card-code">SR</div><div class="card-name">Style Reference</div><div class="card-desc">Match a specific illustration or animation style.</div></div>
+          <div class="card" data-group="m-reftype" data-value="APP SCREENSHOT" onclick="selectCard(this)"><div class="card-code">AS</div><div class="card-name">App Screenshot</div><div class="card-desc">Match the real UI colors, icons, and layout.</div></div>
+          <div class="card" data-group="m-reftype" data-value="ICON REFERENCE" onclick="selectCard(this)"><div class="card-code">IR</div><div class="card-name">Icon Reference</div><div class="card-desc">Match an existing icon set's style and weight.</div></div>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Reference URL <span class="optional">paste image or video URL</span></div>
+        <input type="text" id="m-ref-url" placeholder="https://..." oninput="previewRefUrl('m')" />
+      </div>
+      <div class="form-group">
+        <div class="form-label">Or upload a local file</div>
+        <label class="btn-upload" for="m-ref-file">⬆ Choose File</label>
+        <input type="file" id="m-ref-file" accept="image/*,video/*" onchange="previewRefFile('m', this)" />
+        <div class="ref-preview" id="m-ref-preview"></div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Reference Note <span class="optional">what should Claude pull from this reference?</span></div>
+        <input type="text" id="m-ref-note" placeholder="e.g. Match this exact character's round body and big glossy eyes / Match these soft pastel icon colors" />
+      </div>
+    </div>
+
     <!-- Submit -->
     <div class="submit-area">
       <div class="submit-topbar">Run the animation pipeline</div>
@@ -432,6 +513,51 @@
     return Array.from(document.querySelectorAll('#moments-wrap .moment-tag.selected')).map(t => t.dataset.value);
   }
 
+  // ── Reference section ──
+  function toggleRef(prefix) {
+    const body = document.getElementById(prefix + '-ref-body');
+    const icon = document.getElementById(prefix + '-ref-icon');
+    const bar  = document.getElementById(prefix === 'v' ? 'ref-toggle' : 'm-ref-toggle');
+    const open = body.classList.toggle('open');
+    bar.classList.toggle('open', open);
+    icon.textContent = open ? '×' : '+';
+  }
+  function previewRefUrl(prefix) {
+    const url = document.getElementById(prefix + '-ref-url').value.trim();
+    const wrap = document.getElementById(prefix + '-ref-preview');
+    if (!url) { wrap.style.display = 'none'; wrap.innerHTML = ''; return; }
+    const isVideo = /\.(mp4|mov|webm|avi)(\?|$)/i.test(url);
+    wrap.style.display = 'block';
+    wrap.innerHTML = `<div class="ref-preview-label">Preview</div>` +
+      (isVideo
+        ? `<video src="${url}" controls muted></video>`
+        : `<img src="${url}" onerror="this.style.display='none'" />`);
+  }
+  function previewRefFile(prefix, input) {
+    const wrap = document.getElementById(prefix + '-ref-preview');
+    const file = input.files[0];
+    if (!file) { wrap.style.display = 'none'; return; }
+    const url = URL.createObjectURL(file);
+    wrap.style.display = 'block';
+    wrap.innerHTML = `<div class="ref-preview-label">${file.name}</div>` +
+      (file.type.startsWith('video/')
+        ? `<video src="${url}" controls muted></video>`
+        : `<img src="${url}" />`);
+    // store filename for pipeline data
+    input.dataset.filename = file.name;
+  }
+  function getRefData(prefix) {
+    const body = document.getElementById(prefix + '-ref-body');
+    if (!body.classList.contains('open')) return null;
+    const type    = getVal(prefix + '-reftype');
+    const url     = document.getElementById(prefix + '-ref-url').value.trim();
+    const fileEl  = document.getElementById(prefix + '-ref-file');
+    const note    = document.getElementById(prefix + '-ref-note').value.trim();
+    const source  = url || (fileEl.dataset.filename ? 'local: ' + fileEl.dataset.filename : null);
+    if (!type && !source) return null;
+    return { type: type || 'STYLE REFERENCE', source: source || 'described below', note };
+  }
+
   // ── Mobile: prepare pipeline ──
   function mPrepare() {
     const appname  = document.getElementById('m-appname').value.trim();
@@ -459,10 +585,12 @@
     if (!emotion)         missing.push('Emotional tone');
     if (missing.length) { alert('Please complete: ' + missing.join(', ')); return; }
 
+    const mRef = getRefData('m');
     window.mobilePipelineData = {
       appname, appdesc, mascot, palette, emotion,
       style, chartype, bg, loop, aspect,
       animationMoments: moments,
+      reference: mRef,
       ready: true,
       timestamp: new Date().toISOString()
     };
@@ -521,11 +649,13 @@
     if (missing.length) { alert('Please complete: ' + missing.join(', ')); return; }
 
     // Store brief for Claude to read via Chrome extension
+    const ref = getRefData('v');
     window.pipelineData = {
       appname, appdesc, platform, ratio, res,
       length, videotype, tone, style, model,
       audience, keymsg,
       feature: feature || 'None — build around core emotional benefit',
+      reference: ref,
       ready: true,
       timestamp: new Date().toISOString()
     };
