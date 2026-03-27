@@ -84,6 +84,9 @@
   .output-body::-webkit-scrollbar { width: 4px; }
   .output-body::-webkit-scrollbar-thumb { background: var(--border-bright); }
 
+  .btn-copy-big { width: 100%; margin-top: 12px; font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 16px; background: var(--green-dim); color: var(--green); border: 1px solid #34c46a60; cursor: pointer; letter-spacing: 0.08em; transition: all 0.15s; }
+  .btn-copy-big:hover { background: #34c46a25; border-color: var(--green); }
+  .btn-copy-big.copied { background: var(--green); color: var(--bg); border-color: var(--green); }
   .paste-hint { margin-top: 14px; padding: 14px 18px; border: 1px solid #34c46a30; background: var(--green-dim); font-family: var(--mono); font-size: 11px; color: var(--green); line-height: 1.7; }
   .paste-hint strong { color: #5ce88a; }
 
@@ -219,9 +222,9 @@
           </div>
           <div class="output-body" id="output-body"></div>
         </div>
+        <button class="btn-copy-big" id="copy-btn-big" onclick="copyOutput(this)">⌘ Copy Prompt — Paste into Claude Code</button>
         <div class="paste-hint">
-          <strong>Next step:</strong> Copy the text above → switch to Claude Code → paste it into the chat.<br>
-          Claude will run all 4 agents and output production-ready prompts for every shot.
+          <strong>Next step:</strong> Click Copy above → switch to Claude Code → paste → all 4 agents run automatically.
         </div>
       </div>
     </div>
@@ -409,9 +412,14 @@ End with DELIVERY SUMMARY:
 
   function copyOutput(btn) {
     const text = document.getElementById('output-body').textContent;
+    const isBig = btn.id === 'copy-btn-big';
     navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '✓ Copied!'; btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = '⌘ Copy'; btn.classList.remove('copied'); }, 2000);
+      btn.textContent = '✓ Copied! Now paste into Claude Code';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = isBig ? '⌘ Copy Prompt — Paste into Claude Code' : '⌘ Copy';
+        btn.classList.remove('copied');
+      }, 3000);
     });
   }
 </script>
