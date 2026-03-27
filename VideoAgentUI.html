@@ -3,851 +3,414 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Agent Pipeline — UI</title>
+<title>Video Agent Pipeline</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #090b0e;
-    --surface: #0f1318;
-    --surface2: #141920;
-    --border: #1a1f28;
-    --border-bright: #252d3a;
-    --text: #c4cdd6;
-    --text-dim: #5e6978;
-    --text-bright: #e2eaf3;
-    --accent: #e8a020;
-    --accent-dim: #e8a02018;
-    --blue: #3d8ef0;
-    --blue-dim: #3d8ef018;
-    --green: #34c46a;
-    --green-dim: #34c46a18;
-    --purple: #9060f0;
-    --purple-dim: #9060f018;
-    --red: #f05050;
-    --mono: 'IBM Plex Mono', monospace;
-    --sans: 'IBM Plex Sans', sans-serif;
+    --bg: #090b0e; --surface: #0f1318; --border: #1a1f28; --border-bright: #252d3a;
+    --text: #c4cdd6; --text-dim: #5e6978; --text-bright: #e2eaf3;
+    --accent: #e8a020; --accent-dim: #e8a02018;
+    --green: #34c46a; --green-dim: #34c46a18;
+    --red: #f05858;
+    --mono: 'IBM Plex Mono', monospace; --sans: 'IBM Plex Sans', sans-serif;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.65; min-height: 100vh; }
-  .app { max-width: 820px; margin: 0 auto; padding: 40px 20px 100px; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.65; }
+  .app { max-width: 860px; margin: 0 auto; padding: 36px 20px 100px; }
 
-  /* Step indicator */
-  .steps { display: flex; align-items: center; gap: 0; margin-bottom: 44px; }
-  .step { display: flex; align-items: center; gap: 10px; padding: 10px 16px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); border: 1px solid var(--border); cursor: default; flex: 1; justify-content: center; transition: all 0.2s; }
-  .step:not(:last-child) { border-right: none; }
-  .step .snum { font-weight: 700; }
-  .step.active { background: var(--surface); color: var(--text-bright); border-color: var(--border-bright); }
-  .step.done { color: var(--green); border-color: #34c46a30; background: var(--green-dim); cursor: pointer; }
-  .step.active .snum { color: var(--accent); }
-  .step.done .snum { color: var(--green); }
-
-  /* Section heading */
-  .section-head { margin-bottom: 28px; }
-  .section-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 8px; }
-  .section-title { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
-  .section-sub { font-size: 13px; color: var(--text-dim); }
+  /* Header */
+  .header { border-left: 4px solid var(--accent); padding: 24px 28px; margin-bottom: 36px; background: var(--surface); border-top: 1px solid var(--border-bright); border-right: 1px solid var(--border-bright); border-bottom: 1px solid var(--border-bright); }
+  .header-label { font-family: var(--mono); font-size: 10px; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 8px; }
+  .header h1 { font-family: var(--mono); font-size: 20px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
+  .header p { font-size: 13px; color: var(--text-dim); }
+  .how-it-works { display: flex; gap: 0; margin-top: 16px; flex-wrap: wrap; }
+  .how-step { font-family: var(--mono); font-size: 10px; padding: 6px 12px; border: 1px solid var(--border-bright); color: var(--text-dim); }
+  .how-step:not(:last-child) { border-right: none; }
+  .how-step span { color: var(--accent); font-weight: 700; }
+  .how-arrow { font-family: var(--mono); font-size: 11px; color: var(--border-bright); display: flex; align-items: center; padding: 0 2px; }
 
   /* Form groups */
-  .form-group { margin-bottom: 28px; }
-  .form-label { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
-  .optional { font-size: 10px; color: var(--text-dim); opacity: 0.6; font-style: italic; letter-spacing: 0; text-transform: none; }
-
-  input[type="text"], textarea {
-    width: 100%; background: var(--surface); border: 1px solid var(--border-bright);
-    color: var(--text-bright); font-family: var(--sans); font-size: 14px;
-    padding: 12px 16px; outline: none; resize: none;
-    transition: border-color 0.15s;
-  }
+  .form-group { margin-bottom: 24px; }
+  .form-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+  .optional { font-size: 10px; color: var(--text-dim); opacity: 0.55; font-style: italic; letter-spacing: 0; text-transform: none; }
+  input[type="text"], textarea { width: 100%; background: var(--surface); border: 1px solid var(--border-bright); color: var(--text-bright); font-family: var(--sans); font-size: 14px; padding: 11px 14px; outline: none; resize: none; transition: border-color 0.15s; }
   input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
-  input[type="text"]::placeholder, textarea::placeholder { color: var(--text-dim); }
-  textarea { min-height: 80px; line-height: 1.6; }
+  input::placeholder, textarea::placeholder { color: var(--text-dim); }
+  textarea { min-height: 72px; line-height: 1.6; }
 
-  /* Card grids */
-  .card-grid { display: grid; gap: 10px; }
-  .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
-  .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-
-  .card {
-    background: var(--surface); border: 1px solid var(--border-bright);
-    padding: 14px 16px; cursor: pointer; transition: all 0.15s;
-    position: relative; user-select: none;
-  }
+  /* Cards */
+  .card-grid { display: grid; gap: 8px; }
+  .cols-2 { grid-template-columns: 1fr 1fr; }
+  .cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card { background: var(--surface); border: 1px solid var(--border-bright); padding: 12px 14px; cursor: pointer; transition: all 0.15s; position: relative; user-select: none; }
   .card:hover { border-color: var(--accent); background: var(--accent-dim); }
   .card.selected { border-color: var(--accent); background: var(--accent-dim); }
-  .card.selected::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 100%; background: var(--accent); }
-  .card-code { font-family: var(--mono); font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 4px; }
-  .card-name { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text-bright); margin-bottom: 4px; }
+  .card.selected::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background: var(--accent); }
+  .card-code { font-family: var(--mono); font-size: 10px; color: var(--accent); font-weight: 700; letter-spacing: 0.1em; margin-bottom: 3px; }
+  .card-name { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--text-bright); margin-bottom: 3px; }
   .card-desc { font-size: 11px; color: var(--text-dim); line-height: 1.5; }
-  .card-ref { font-size: 10px; color: var(--text-dim); opacity: 0.7; margin-top: 6px; font-style: italic; }
+  .card-ref { font-size: 10px; color: var(--text-dim); opacity: 0.6; margin-top: 5px; font-style: italic; }
 
-  /* Pill buttons (video length) */
+  /* Pills */
   .pill-group { display: flex; gap: 8px; flex-wrap: wrap; }
-  .pill {
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    padding: 8px 20px; border: 1px solid var(--border-bright);
-    background: var(--surface); color: var(--text-dim); cursor: pointer;
-    transition: all 0.15s; letter-spacing: 0.05em;
-  }
-  .pill:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
-  .pill.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+  .pill { font-family: var(--mono); font-size: 12px; font-weight: 700; padding: 8px 20px; border: 1px solid var(--border-bright); background: var(--surface); color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .pill:hover, .pill.selected { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 
-  /* Category label */
-  .cat-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 8px; margin-top: 20px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .cat-label { font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.2em; text-transform: uppercase; margin: 18px 0 8px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
   .cat-label:first-child { margin-top: 0; }
 
-  /* Action buttons */
-  .actions { display: flex; gap: 12px; margin-top: 36px; align-items: center; }
-  .btn-primary {
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    padding: 12px 28px; background: var(--accent); color: var(--bg);
-    border: none; cursor: pointer; letter-spacing: 0.08em;
-    transition: opacity 0.15s;
-  }
-  .btn-primary:hover { opacity: 0.85; }
-  .btn-primary:disabled { opacity: 0.3; cursor: not-allowed; }
-  .btn-secondary {
-    font-family: var(--mono); font-size: 12px; font-weight: 700;
-    padding: 12px 24px; background: transparent; color: var(--text-dim);
-    border: 1px solid var(--border-bright); cursor: pointer; letter-spacing: 0.08em;
-    transition: all 0.15s;
-  }
-  .btn-secondary:hover { color: var(--text-bright); border-color: var(--text-dim); }
+  hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 
-  /* Output panel */
-  .output-panel { margin-top: 36px; background: var(--surface); border: 1px solid var(--border-bright); overflow: hidden; }
-  .output-topbar { display: flex; justify-content: space-between; align-items: center; padding: 10px 18px; background: var(--border); border-bottom: 1px solid var(--border-bright); }
-  .output-label { font-family: var(--mono); font-size: 10px; color: var(--green); letter-spacing: 0.2em; text-transform: uppercase; }
-  .copy-btn {
-    font-family: var(--mono); font-size: 11px; font-weight: 700;
-    padding: 5px 14px; border: 1px solid var(--border-bright);
-    background: var(--bg); color: var(--text-dim); cursor: pointer;
-    letter-spacing: 0.08em; transition: all 0.15s;
-  }
-  .copy-btn:hover { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
-  .copy-btn.copied { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
-  .output-body {
-    padding: 20px 24px; font-family: var(--mono); font-size: 11.5px;
-    line-height: 1.9; color: var(--text); white-space: pre-wrap;
-    word-break: break-word; max-height: 420px; overflow-y: auto;
-    scrollbar-width: thin; scrollbar-color: var(--border-bright) transparent;
-  }
+  /* Submit area */
+  .submit-area { margin-top: 36px; background: var(--surface); border: 1px solid var(--border-bright); overflow: hidden; }
+  .submit-topbar { padding: 12px 18px; background: var(--border); border-bottom: 1px solid var(--border-bright); font-family: var(--mono); font-size: 10px; color: var(--text-dim); letter-spacing: 0.18em; text-transform: uppercase; }
+  .submit-body { padding: 20px 24px; }
+  .submit-instruction { font-size: 13px; color: var(--text-dim); margin-bottom: 18px; line-height: 1.7; }
+  .submit-instruction strong { color: var(--text-bright); }
+  .submit-instruction code { font-family: var(--mono); font-size: 12px; background: var(--border); padding: 2px 6px; color: var(--accent); }
+
+  .btn-generate { font-family: var(--mono); font-size: 13px; font-weight: 700; padding: 14px 32px; background: var(--accent); color: var(--bg); border: none; cursor: pointer; letter-spacing: 0.08em; transition: opacity 0.15s; width: 100%; }
+  .btn-generate:hover { opacity: 0.88; }
+
+  /* Output */
+  .output-wrap { margin-top: 20px; display: none; }
+  .output-panel { background: var(--bg); border: 1px solid var(--border-bright); }
+  .output-topbar { display: flex; justify-content: space-between; align-items: center; padding: 9px 16px; background: var(--border); border-bottom: 1px solid var(--border-bright); }
+  .output-label { font-family: var(--mono); font-size: 10px; color: var(--green); letter-spacing: 0.18em; text-transform: uppercase; }
+  .btn-copy { font-family: var(--mono); font-size: 11px; font-weight: 700; padding: 5px 14px; border: 1px solid var(--border-bright); background: var(--surface); color: var(--text-dim); cursor: pointer; transition: all 0.15s; }
+  .btn-copy:hover { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
+  .btn-copy.copied { color: var(--green); border-color: #34c46a60; background: var(--green-dim); }
+  .output-body { padding: 18px 22px; font-family: var(--mono); font-size: 11.5px; line-height: 1.9; color: var(--text); white-space: pre-wrap; word-break: break-word; max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border-bright) transparent; }
   .output-body::-webkit-scrollbar { width: 4px; }
   .output-body::-webkit-scrollbar-thumb { background: var(--border-bright); }
 
-  .next-hint { margin-top: 16px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); padding: 12px 16px; border: 1px solid var(--border); background: var(--surface); }
-  .next-hint span { color: var(--accent); }
+  .paste-hint { margin-top: 14px; padding: 14px 18px; border: 1px solid #34c46a30; background: var(--green-dim); font-family: var(--mono); font-size: 11px; color: var(--green); line-height: 1.7; }
+  .paste-hint strong { color: #5ce88a; }
 
-  /* Divider */
-  hr { border: none; border-top: 1px solid var(--border); margin: 32px 0; }
-
-  /* Validation */
-  .form-group.error input, .form-group.error textarea { border-color: var(--red); }
-  .error-msg { font-family: var(--mono); font-size: 10px; color: var(--red); margin-top: 6px; }
-
-  /* Hidden */
-  .hidden { display: none; }
-
-  /* Responsive */
-  @media (max-width: 600px) {
-    .card-grid.cols-3 { grid-template-columns: 1fr 1fr; }
-    .card-grid.cols-4 { grid-template-columns: 1fr 1fr; }
-    .steps .slabel { display: none; }
-  }
+  @media (max-width: 580px) { .cols-3 { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- Step indicator -->
-  <div class="steps">
-    <div class="step active" id="tab-1"><span class="snum">01</span><span class="slabel">Creative Director</span></div>
-    <div class="step" id="tab-2"><span class="snum">02</span><span class="slabel">Style Director</span></div>
-    <div class="step" id="tab-3"><span class="snum">03</span><span class="slabel">Cinematographer</span></div>
-    <div class="step" id="tab-4"><span class="snum">04</span><span class="slabel">Prompt Packager</span></div>
-  </div>
-
-  <!-- ═══════════════════════════════════════════════ STEP 1 -->
-  <div id="step-1">
-    <div class="section-head">
-      <div class="section-label">Agent 01</div>
-      <div class="section-title">Creative Director</div>
-      <div class="section-sub">Fill in the brief. Every field builds the foundation the other agents work from.</div>
-    </div>
-
-    <div class="form-group" id="fg-appname">
-      <div class="form-label">App / Product Name</div>
-      <input type="text" id="appname" placeholder="e.g. Lumora" />
-    </div>
-
-    <div class="form-group" id="fg-appdesc">
-      <div class="form-label">What does it do? <span class="optional">one sentence</span></div>
-      <input type="text" id="appdesc" placeholder="e.g. An AI journaling app that turns your thoughts into structured insights" />
-    </div>
-
-    <hr>
-
-    <div class="form-group">
-      <div class="form-label">Platform</div>
-      <div class="card-grid cols-2">
-        <div class="card" data-group="platform" data-value="TikTok / Instagram Reels / YouTube Shorts" data-spec="9:16 — 1080×1920" onclick="selectCard(this)">
-          <div class="card-code">A</div>
-          <div class="card-name">TikTok / Reels / Shorts</div>
-          <div class="card-desc">9:16 vertical — 1080×1920px</div>
-        </div>
-        <div class="card" data-group="platform" data-value="YouTube long-form" data-spec="16:9 — 1920×1080" onclick="selectCard(this)">
-          <div class="card-code">B</div>
-          <div class="card-name">YouTube Long-form</div>
-          <div class="card-desc">16:9 horizontal — 1920×1080px</div>
-        </div>
-        <div class="card" data-group="platform" data-value="Instagram Feed" data-spec="1:1 or 4:5 — 1080×1080 / 1080×1350" onclick="selectCard(this)">
-          <div class="card-code">C</div>
-          <div class="card-name">Instagram Feed</div>
-          <div class="card-desc">1:1 square or 4:5 portrait</div>
-        </div>
-        <div class="card" data-group="platform" data-value="Facebook Feed" data-spec="16:9 or 1:1" onclick="selectCard(this)">
-          <div class="card-code">D</div>
-          <div class="card-name">Facebook Feed</div>
-          <div class="card-desc">16:9 or 1:1</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="form-label">Video Length</div>
-      <div class="pill-group">
-        <div class="pill" data-group="length" data-value="15s" onclick="selectPill(this)">15s</div>
-        <div class="pill" data-group="length" data-value="30s" onclick="selectPill(this)">30s</div>
-        <div class="pill" data-group="length" data-value="60s" onclick="selectPill(this)">60s</div>
-        <div class="pill" data-group="length" data-value="90s+" onclick="selectPill(this)">90s+</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="form-label">Video Type</div>
-      <div class="card-grid cols-2">
-        <div class="card" data-group="videotype" data-value="STEALTH PROMO" onclick="selectCard(this)">
-          <div class="card-name">Stealth Promo</div>
-          <div class="card-desc">Looks organic. Hook is hidden. Viewer commits before realizing it's a promo.</div>
-        </div>
-        <div class="card" data-group="videotype" data-value="OPEN PROMO" onclick="selectCard(this)">
-          <div class="card-name">Open Promo</div>
-          <div class="card-desc">Brand-forward. Product visible from the start. Confident.</div>
-        </div>
-        <div class="card" data-group="videotype" data-value="PURE CINEMATIC" onclick="selectCard(this)">
-          <div class="card-name">Pure Cinematic</div>
-          <div class="card-desc">No product placement. Mood or lifestyle piece. Brand by association.</div>
-        </div>
-        <div class="card" data-group="videotype" data-value="ANIMATION" onclick="selectCard(this)">
-          <div class="card-name">Animation</div>
-          <div class="card-desc">Stylized, illustrated, or motion-graphic format.</div>
-        </div>
-        <div class="card" data-group="videotype" data-value="APP DEMO" onclick="selectCard(this)">
-          <div class="card-name">App Demo</div>
-          <div class="card-desc">Screen recording wrapped in cinematic framing.</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <div class="form-label">Tone</div>
-      <div class="card-grid cols-3">
-        <div class="card" data-group="tone" data-value="PREMIUM MINIMAL" onclick="selectCard(this)">
-          <div class="card-name">Premium Minimal</div>
-          <div class="card-desc">Clean, quiet confidence, restraint.</div>
-        </div>
-        <div class="card" data-group="tone" data-value="CHAOTIC ENERGY" onclick="selectCard(this)">
-          <div class="card-name">Chaotic Energy</div>
-          <div class="card-desc">Fast cuts, overstimulation, loud.</div>
-        </div>
-        <div class="card" data-group="tone" data-value="WARM RELATABLE" onclick="selectCard(this)">
-          <div class="card-name">Warm Relatable</div>
-          <div class="card-desc">Authentic, human, slice-of-life.</div>
-        </div>
-        <div class="card" data-group="tone" data-value="DARK & TENSE" onclick="selectCard(this)">
-          <div class="card-name">Dark & Tense</div>
-          <div class="card-desc">Thriller energy, suspense, unease.</div>
-        </div>
-        <div class="card" data-group="tone" data-value="PLAYFUL & ABSURD" onclick="selectCard(this)">
-          <div class="card-name">Playful & Absurd</div>
-          <div class="card-desc">Comedic, weird, unexpected.</div>
-        </div>
-        <div class="card" data-group="tone" data-value="ASPIRATIONAL" onclick="selectCard(this)">
-          <div class="card-name">Aspirational</div>
-          <div class="card-desc">Lifestyle elevation, desire, envy-coded.</div>
-        </div>
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="form-group" id="fg-audience">
-      <div class="form-label">Target Audience</div>
-      <input type="text" id="audience" placeholder="e.g. 18-25, anxious overthinkers, journaling but never sticking with it" />
-    </div>
-
-    <div class="form-group" id="fg-keymessage">
-      <div class="form-label">Key Message <span class="optional">what should viewer feel or do?</span></div>
-      <textarea id="keymessage" placeholder="e.g. Feel like this app finally gets how their brain works and download it immediately"></textarea>
-    </div>
-
-    <div class="form-group">
-      <div class="form-label">Feature to Highlight <span class="optional">optional</span></div>
-      <textarea id="feature" placeholder="e.g. The AI mood detection on the home screen — it shows your emotional pattern over the week"></textarea>
-    </div>
-
-    <div class="actions">
-      <button class="btn-primary" onclick="generateBrief()">Generate Creative Brief →</button>
-    </div>
-
-    <div id="brief-output" class="hidden">
-      <div class="output-panel" style="margin-top:32px;">
-        <div class="output-topbar">
-          <span class="output-label">✓ Creative Brief Generated</span>
-          <button class="copy-btn" onclick="copyOutput('brief-text', this)">⌘ Copy</button>
-        </div>
-        <div class="output-body" id="brief-text"></div>
-      </div>
-      <div class="next-hint">Next: click <span>02 Style Director</span> above — or paste this brief into Claude with <span>/video-style-director</span></div>
-      <div class="actions">
-        <button class="btn-primary" onclick="goToStep(2)">Continue to Style Director →</button>
-      </div>
+  <div class="header">
+    <div class="header-label">Video Agent Pipeline</div>
+    <h1>Video Brief Builder</h1>
+    <p>Fill in the form, click Generate, copy the output — paste it into Claude Code and all 4 agents run automatically.</p>
+    <div class="how-it-works">
+      <div class="how-step"><span>1</span> Fill form</div>
+      <div class="how-arrow">→</div>
+      <div class="how-step"><span>2</span> Click Generate</div>
+      <div class="how-arrow">→</div>
+      <div class="how-step"><span>3</span> Copy output</div>
+      <div class="how-arrow">→</div>
+      <div class="how-step"><span>4</span> Paste into Claude Code</div>
+      <div class="how-arrow">→</div>
+      <div class="how-step"><span>5</span> Get all prompts</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════ STEP 2 -->
-  <div id="step-2" class="hidden">
-    <div class="section-head">
-      <div class="section-label">Agent 02</div>
-      <div class="section-title">Style Director</div>
-      <div class="section-sub">Select the visual language. This becomes law for the Cinematographer and Prompt Packager.</div>
-    </div>
+  <!-- App Info -->
+  <div class="form-group"><div class="form-label">App / Product Name</div><input type="text" id="appname" placeholder="e.g. Lumora" /></div>
+  <div class="form-group"><div class="form-label">What does it do? <span class="optional">one sentence</span></div><input type="text" id="appdesc" placeholder="e.g. An AI journaling app that turns your thoughts into structured insights" /></div>
+  <hr>
 
-    <div class="form-group">
-      <div class="form-label">Visual Style</div>
-
-      <div class="cat-label">Realism Track</div>
-      <div class="card-grid cols-2">
-        <div class="card" data-group="style" data-value="R1 — CINEMATIC REALISM" onclick="selectCard(this)">
-          <div class="card-code">R1</div>
-          <div class="card-name">Cinematic Realism</div>
-          <div class="card-desc">Anamorphic lenses, film grain, muted midtones, crushed blacks, motivated practical lighting.</div>
-          <div class="card-ref">Blade Runner 2049 · Arrival · The Social Network</div>
-        </div>
-        <div class="card" data-group="style" data-value="R2 — UGC / NATIVE CONTENT" onclick="selectCard(this)">
-          <div class="card-code">R2</div>
-          <div class="card-name">UGC / Native Content</div>
-          <div class="card-desc">Handheld micro-shake, no color grade, subjects look real not cast. Feels like you found it.</div>
-          <div class="card-ref">iPhone ProRes · BeReal · Raw TikTok drafts</div>
-        </div>
-        <div class="card" data-group="style" data-value="R3 — DOCUMENTARY" onclick="selectCard(this)">
-          <div class="card-code">R3</div>
-          <div class="card-name">Documentary</div>
-          <div class="card-desc">Observational, natural light, talking-head framing, long takes, subtle desaturation.</div>
-          <div class="card-ref">Free Solo · Honeyland · Vice shorts</div>
-        </div>
-        <div class="card" data-group="style" data-value="R4 — NOIR / NEO-NOIR" onclick="selectCard(this)">
-          <div class="card-code">R4</div>
-          <div class="card-name">Noir / Neo-Noir</div>
-          <div class="card-desc">High contrast, deep shadows, near-monochrome with one accent color, wet surfaces, 2am energy.</div>
-          <div class="card-ref">Sin City · Drive · True Detective S1</div>
-        </div>
-      </div>
-
-      <div class="cat-label">Period / World Track</div>
-      <div class="card-grid cols-3">
-        <div class="card" data-group="style" data-value="W1 — HISTORICAL / PERIOD" onclick="selectCard(this)">
-          <div class="card-code">W1</div>
-          <div class="card-name">Historical / Period</div>
-          <div class="card-desc">Era-accurate wardrobe, film burns, decade-locked color palette.</div>
-          <div class="card-ref">Peaky Blinders · 1917 · The Crown</div>
-        </div>
-        <div class="card" data-group="style" data-value="W2 — CYBERPUNK / NEO-FUTURE" onclick="selectCard(this)">
-          <div class="card-code">W2</div>
-          <div class="card-name">Cyberpunk / Neo-Future</div>
-          <div class="card-desc">Neon darkness, chromatic aberration, teal and magenta, holographic UI.</div>
-          <div class="card-ref">Ghost in the Shell · Akira · Altered Carbon</div>
-        </div>
-        <div class="card" data-group="style" data-value="W3 — BLACK MIRROR / NEAR-FUTURE" onclick="selectCard(this)">
-          <div class="card-code">W3</div>
-          <div class="card-name">Black Mirror / Near-Future</div>
-          <div class="card-desc">Clinical, desaturated, sterile white surfaces. Technology beautiful and threatening.</div>
-          <div class="card-ref">Black Mirror S3 · Ex Machina · Her</div>
-        </div>
-      </div>
-
-      <div class="cat-label">Animation / Art Track</div>
-      <div class="card-grid cols-3">
-        <div class="card" data-group="style" data-value="A1 — DISNEY / PIXAR 3D" onclick="selectCard(this)">
-          <div class="card-code">A1</div>
-          <div class="card-name">Disney / Pixar 3D</div>
-          <div class="card-desc">Subsurface skin lighting, expressive eyes, saturated palette, smooth 24fps.</div>
-          <div class="card-ref">Soul · Turning Red · Encanto</div>
-        </div>
-        <div class="card" data-group="style" data-value="A2 — STUDIO GHIBLI" onclick="selectCard(this)">
-          <div class="card-code">A2</div>
-          <div class="card-name">Studio Ghibli</div>
-          <div class="card-desc">Watercolor washes, hand-painted texture, lush environment, weighted movement.</div>
-          <div class="card-ref">Spirited Away · Mononoke · The Wind Rises</div>
-        </div>
-        <div class="card" data-group="style" data-value="A3 — ANIME" onclick="selectCard(this)">
-          <div class="card-code">A3</div>
-          <div class="card-name">Anime</div>
-          <div class="card-desc">Speed lines, impact frames, cel-shaded, dramatic lighting shifts on emotional beats.</div>
-          <div class="card-ref">Demon Slayer · Jujutsu Kaisen · Your Name</div>
-        </div>
-        <div class="card" data-group="style" data-value="A4 — PICASSO / CUBIST" onclick="selectCard(this)">
-          <div class="card-code">A4</div>
-          <div class="card-name">Picasso / Cubist</div>
-          <div class="card-desc">Fragmented geometry, bold flat color, black outlines, figures deconstructed expressively.</div>
-          <div class="card-ref">Guernica · Gorillaz videos · Abstract MV</div>
-        </div>
-        <div class="card" data-group="style" data-value="A5 — MOTION GRAPHICS" onclick="selectCard(this)">
-          <div class="card-code">A5</div>
-          <div class="card-name">Motion Graphics</div>
-          <div class="card-desc">Vector shapes, typography in motion, 3-4 color values, info reveals on beat.</div>
-          <div class="card-ref">Apple reveals · Stripe animated · Kurzgesagt</div>
-        </div>
-      </div>
-
-      <div class="cat-label">Director Mode Track</div>
-      <div class="card-grid cols-2">
-        <div class="card" data-group="style" data-value="D1 — NOLAN MODE" onclick="selectCard(this)">
-          <div class="card-code">D1</div>
-          <div class="card-name">Nolan Mode</div>
-          <div class="card-desc">Practical scale, IMAX composition, non-linear tension, cold blues + amber warmth for humans.</div>
-          <div class="card-ref">Interstellar · Dunkirk · The Dark Knight</div>
-        </div>
-        <div class="card" data-group="style" data-value="D2 — FINCHER MODE" onclick="selectCard(this)">
-          <div class="card-code">D2</div>
-          <div class="card-name">Fincher Mode</div>
-          <div class="card-desc">Cold, precise, clinical. No handheld. Desaturated green-grey. Information withheld.</div>
-          <div class="card-ref">Fight Club · Gone Girl · The Social Network</div>
-        </div>
-        <div class="card" data-group="style" data-value="D3 — WES ANDERSON MODE" onclick="selectCard(this)">
-          <div class="card-code">D3</div>
-          <div class="card-name">Wes Anderson Mode</div>
-          <div class="card-desc">Perfect symmetry, pastel palette + one accent, flat deadpan, whip-pan transitions.</div>
-          <div class="card-ref">Grand Budapest Hotel · Asteroid City</div>
-        </div>
-        <div class="card" data-group="style" data-value="D4 — A24 MODE" onclick="selectCard(this)">
-          <div class="card-code">D4</div>
-          <div class="card-name">A24 Mode</div>
-          <div class="card-desc">Intimate, uncomfortable. Handheld but controlled. Natural light pushed to extremes.</div>
-          <div class="card-ref">Midsommar · Moonlight · Lady Bird</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="actions">
-      <button class="btn-primary" onclick="generateVLS()">Generate Visual Language Spec →</button>
-      <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
-    </div>
-
-    <div id="vls-output" class="hidden">
-      <div class="output-panel" style="margin-top:32px;">
-        <div class="output-topbar">
-          <span class="output-label">✓ Visual Language Spec Generated</span>
-          <button class="copy-btn" onclick="copyOutput('vls-text', this)">⌘ Copy</button>
-        </div>
-        <div class="output-body" id="vls-text"></div>
-      </div>
-      <div class="next-hint">Next: click <span>03 Cinematographer</span> above — or paste both outputs into Claude with <span>/video-cinematographer</span></div>
-      <div class="actions">
-        <button class="btn-primary" onclick="goToStep(3)">Continue to Cinematographer →</button>
-      </div>
+  <!-- Platform -->
+  <div class="form-group">
+    <div class="form-label">Platform</div>
+    <div class="card-grid cols-2">
+      <div class="card" data-group="platform" data-value="TikTok / Instagram Reels / YouTube Shorts" data-ratio="9:16" data-res="1080×1920" onclick="selectCard(this)"><div class="card-code">A</div><div class="card-name">TikTok / Reels / Shorts</div><div class="card-desc">9:16 vertical — 1080×1920px</div></div>
+      <div class="card" data-group="platform" data-value="YouTube long-form" data-ratio="16:9" data-res="1920×1080" onclick="selectCard(this)"><div class="card-code">B</div><div class="card-name">YouTube Long-form</div><div class="card-desc">16:9 horizontal — 1920×1080px</div></div>
+      <div class="card" data-group="platform" data-value="Instagram Feed" data-ratio="1:1 or 4:5" data-res="1080×1080 or 1080×1350" onclick="selectCard(this)"><div class="card-code">C</div><div class="card-name">Instagram Feed</div><div class="card-desc">1:1 square or 4:5 portrait</div></div>
+      <div class="card" data-group="platform" data-value="Facebook Feed" data-ratio="16:9 or 1:1" data-res="1920×1080 or 1080×1080" onclick="selectCard(this)"><div class="card-code">D</div><div class="card-name">Facebook Feed</div><div class="card-desc">16:9 or 1:1</div></div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════ STEP 3 -->
-  <div id="step-3" class="hidden">
-    <div class="section-head">
-      <div class="section-label">Agent 03</div>
-      <div class="section-title">Cinematographer</div>
-      <div class="section-sub">Paste the combined brief below into Claude Code using <strong style="color:var(--accent)">/video-cinematographer</strong>. The agent will output a full shot list.</div>
-    </div>
-
-    <div class="output-panel">
-      <div class="output-topbar">
-        <span class="output-label">Combined Input for Cinematographer</span>
-        <button class="copy-btn" onclick="copyOutput('cine-input', this)">⌘ Copy All</button>
-      </div>
-      <div class="output-body" id="cine-input"></div>
-    </div>
-
-    <div class="next-hint" style="margin-top:16px;">Copy the above → open Claude Code → type <span>/video-cinematographer</span> → paste when prompted.</div>
-
-    <div class="actions" style="margin-top:24px;">
-      <button class="btn-primary" onclick="goToStep(4)">Continue to Prompt Packager →</button>
-      <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+  <!-- Length -->
+  <div class="form-group">
+    <div class="form-label">Video Length</div>
+    <div class="pill-group">
+      <div class="pill" data-group="length" data-value="15s" onclick="selectPill(this)">15s</div>
+      <div class="pill" data-group="length" data-value="30s" onclick="selectPill(this)">30s</div>
+      <div class="pill" data-group="length" data-value="60s" onclick="selectPill(this)">60s</div>
+      <div class="pill" data-group="length" data-value="90s+" onclick="selectPill(this)">90s+</div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════ STEP 4 -->
-  <div id="step-4" class="hidden">
-    <div class="section-head">
-      <div class="section-label">Agent 04</div>
-      <div class="section-title">Prompt Packager</div>
-      <div class="section-sub">Paste your completed shot list from Agent 03 here, then copy the full input to use with <strong style="color:var(--purple)">/video-prompt-packager</strong>.</div>
+  <!-- Video Type -->
+  <div class="form-group">
+    <div class="form-label">Video Type</div>
+    <div class="card-grid cols-2">
+      <div class="card" data-group="videotype" data-value="STEALTH PROMO" onclick="selectCard(this)"><div class="card-name">Stealth Promo</div><div class="card-desc">Looks organic. Hook hidden. Viewer commits before realizing it's a promo.</div></div>
+      <div class="card" data-group="videotype" data-value="OPEN PROMO" onclick="selectCard(this)"><div class="card-name">Open Promo</div><div class="card-desc">Brand-forward. Product visible from the start.</div></div>
+      <div class="card" data-group="videotype" data-value="PURE CINEMATIC" onclick="selectCard(this)"><div class="card-name">Pure Cinematic</div><div class="card-desc">No product placement. Mood or lifestyle piece.</div></div>
+      <div class="card" data-group="videotype" data-value="ANIMATION" onclick="selectCard(this)"><div class="card-name">Animation</div><div class="card-desc">Stylized, illustrated, or motion-graphic.</div></div>
+      <div class="card" data-group="videotype" data-value="APP DEMO" onclick="selectCard(this)"><div class="card-name">App Demo</div><div class="card-desc">Screen recording wrapped in cinematic framing.</div></div>
     </div>
+  </div>
 
-    <div class="form-group">
-      <div class="form-label">Paste Shot List from Agent 03</div>
-      <textarea id="shotlist-input" rows="10" placeholder="Paste the full shot list output from the Cinematographer agent here..."></textarea>
+  <!-- Tone -->
+  <div class="form-group">
+    <div class="form-label">Tone</div>
+    <div class="card-grid cols-3">
+      <div class="card" data-group="tone" data-value="PREMIUM MINIMAL" onclick="selectCard(this)"><div class="card-name">Premium Minimal</div><div class="card-desc">Clean, quiet confidence, restraint.</div></div>
+      <div class="card" data-group="tone" data-value="CHAOTIC ENERGY" onclick="selectCard(this)"><div class="card-name">Chaotic Energy</div><div class="card-desc">Fast cuts, overstimulation, loud.</div></div>
+      <div class="card" data-group="tone" data-value="WARM RELATABLE" onclick="selectCard(this)"><div class="card-name">Warm Relatable</div><div class="card-desc">Authentic, human, slice-of-life.</div></div>
+      <div class="card" data-group="tone" data-value="DARK & TENSE" onclick="selectCard(this)"><div class="card-name">Dark & Tense</div><div class="card-desc">Thriller energy, suspense, unease.</div></div>
+      <div class="card" data-group="tone" data-value="PLAYFUL & ABSURD" onclick="selectCard(this)"><div class="card-name">Playful & Absurd</div><div class="card-desc">Comedic, weird, unexpected.</div></div>
+      <div class="card" data-group="tone" data-value="ASPIRATIONAL" onclick="selectCard(this)"><div class="card-name">Aspirational</div><div class="card-desc">Lifestyle elevation, desire, envy-coded.</div></div>
     </div>
+  </div>
 
-    <div class="actions">
-      <button class="btn-primary" onclick="generatePackagerInput()">Build Packager Input →</button>
-      <button class="btn-secondary" onclick="goToStep(3)">← Back</button>
+  <!-- Visual Style -->
+  <div class="form-group">
+    <div class="form-label">Visual Style</div>
+    <div class="cat-label">Realism Track</div>
+    <div class="card-grid cols-2">
+      <div class="card" data-group="style" data-value="R1 — CINEMATIC REALISM" onclick="selectCard(this)"><div class="card-code">R1</div><div class="card-name">Cinematic Realism</div><div class="card-desc">Anamorphic, film grain, muted midtones, practical lighting.</div><div class="card-ref">Blade Runner 2049 · Arrival · The Social Network</div></div>
+      <div class="card" data-group="style" data-value="R2 — UGC / NATIVE CONTENT" onclick="selectCard(this)"><div class="card-code">R2</div><div class="card-name">UGC / Native Content</div><div class="card-desc">Handheld micro-shake, no grade, subjects look real not cast.</div><div class="card-ref">iPhone ProRes · BeReal · Raw TikTok</div></div>
+      <div class="card" data-group="style" data-value="R3 — DOCUMENTARY" onclick="selectCard(this)"><div class="card-code">R3</div><div class="card-name">Documentary</div><div class="card-desc">Observational, natural light, long takes, subtle desaturation.</div><div class="card-ref">Free Solo · Honeyland · Vice shorts</div></div>
+      <div class="card" data-group="style" data-value="R4 — NOIR / NEO-NOIR" onclick="selectCard(this)"><div class="card-code">R4</div><div class="card-name">Noir / Neo-Noir</div><div class="card-desc">High contrast, deep shadows, one accent color, 2am energy.</div><div class="card-ref">Sin City · Drive · True Detective S1</div></div>
     </div>
+    <div class="cat-label">Period / World Track</div>
+    <div class="card-grid cols-3">
+      <div class="card" data-group="style" data-value="W1 — HISTORICAL / PERIOD" onclick="selectCard(this)"><div class="card-code">W1</div><div class="card-name">Historical / Period</div><div class="card-desc">Era-accurate, film burns, decade-locked palette.</div><div class="card-ref">Peaky Blinders · 1917 · The Crown</div></div>
+      <div class="card" data-group="style" data-value="W2 — CYBERPUNK / NEO-FUTURE" onclick="selectCard(this)"><div class="card-code">W2</div><div class="card-name">Cyberpunk</div><div class="card-desc">Neon, chromatic aberration, teal/magenta, holographic UI.</div><div class="card-ref">Ghost in the Shell · Akira · Altered Carbon</div></div>
+      <div class="card" data-group="style" data-value="W3 — BLACK MIRROR / NEAR-FUTURE" onclick="selectCard(this)"><div class="card-code">W3</div><div class="card-name">Black Mirror</div><div class="card-desc">Clinical, desaturated, sterile surfaces, threatening tech.</div><div class="card-ref">Black Mirror S3 · Ex Machina · Her</div></div>
+    </div>
+    <div class="cat-label">Animation / Art Track</div>
+    <div class="card-grid cols-3">
+      <div class="card" data-group="style" data-value="A1 — DISNEY / PIXAR 3D" onclick="selectCard(this)"><div class="card-code">A1</div><div class="card-name">Disney / Pixar 3D</div><div class="card-desc">Subsurface lighting, expressive eyes, saturated palette.</div><div class="card-ref">Soul · Turning Red · Encanto</div></div>
+      <div class="card" data-group="style" data-value="A2 — STUDIO GHIBLI" onclick="selectCard(this)"><div class="card-code">A2</div><div class="card-name">Studio Ghibli</div><div class="card-desc">Watercolor washes, hand-painted texture, lush environments.</div><div class="card-ref">Spirited Away · Mononoke · The Wind Rises</div></div>
+      <div class="card" data-group="style" data-value="A3 — ANIME" onclick="selectCard(this)"><div class="card-code">A3</div><div class="card-name">Anime</div><div class="card-desc">Speed lines, impact frames, cel-shaded, dramatic lighting.</div><div class="card-ref">Demon Slayer · Jujutsu Kaisen · Your Name</div></div>
+      <div class="card" data-group="style" data-value="A4 — PICASSO / CUBIST" onclick="selectCard(this)"><div class="card-code">A4</div><div class="card-name">Picasso / Cubist</div><div class="card-desc">Fragmented geometry, bold flat color, black outlines.</div><div class="card-ref">Guernica · Gorillaz · Abstract MV</div></div>
+      <div class="card" data-group="style" data-value="A5 — MOTION GRAPHICS" onclick="selectCard(this)"><div class="card-code">A5</div><div class="card-name">Motion Graphics</div><div class="card-desc">Vector shapes, typography in motion, 3-4 color values.</div><div class="card-ref">Apple reveals · Stripe · Kurzgesagt</div></div>
+    </div>
+    <div class="cat-label">Director Mode Track</div>
+    <div class="card-grid cols-2">
+      <div class="card" data-group="style" data-value="D1 — NOLAN MODE" onclick="selectCard(this)"><div class="card-code">D1</div><div class="card-name">Nolan Mode</div><div class="card-desc">Practical scale, IMAX composition, non-linear tension.</div><div class="card-ref">Interstellar · Dunkirk · The Dark Knight</div></div>
+      <div class="card" data-group="style" data-value="D2 — FINCHER MODE" onclick="selectCard(this)"><div class="card-code">D2</div><div class="card-name">Fincher Mode</div><div class="card-desc">Cold, precise, clinical. No handheld. Desaturated green-grey.</div><div class="card-ref">Fight Club · Gone Girl · The Social Network</div></div>
+      <div class="card" data-group="style" data-value="D3 — WES ANDERSON MODE" onclick="selectCard(this)"><div class="card-code">D3</div><div class="card-name">Wes Anderson Mode</div><div class="card-desc">Perfect symmetry, pastel palette, flat deadpan, whip-pans.</div><div class="card-ref">Grand Budapest Hotel · Asteroid City</div></div>
+      <div class="card" data-group="style" data-value="D4 — A24 MODE" onclick="selectCard(this)"><div class="card-code">D4</div><div class="card-name">A24 Mode</div><div class="card-desc">Intimate, uncomfortable, handheld, natural light extremes.</div><div class="card-ref">Midsommar · Moonlight · Lady Bird</div></div>
+    </div>
+  </div>
 
-    <div id="packager-output" class="hidden">
-      <div class="output-panel" style="margin-top:32px;">
-        <div class="output-topbar">
-          <span class="output-label">✓ Packager Input Ready</span>
-          <button class="copy-btn" onclick="copyOutput('packager-text', this)">⌘ Copy All</button>
-        </div>
-        <div class="output-body" id="packager-text"></div>
+  <hr>
+
+  <!-- Audience & Message -->
+  <div class="form-group"><div class="form-label">Target Audience</div><input type="text" id="audience" placeholder="e.g. 18-25, anxious overthinkers, journaling but never sticking with it" /></div>
+  <div class="form-group"><div class="form-label">Key Message <span class="optional">what should viewer feel or do?</span></div><textarea id="keymessage" placeholder="e.g. Feel like this app finally gets how their brain works and download it immediately"></textarea></div>
+  <div class="form-group"><div class="form-label">Feature to Highlight <span class="optional">optional</span></div><textarea id="feature" placeholder="e.g. The AI mood detection on the home screen"></textarea></div>
+
+  <!-- Submit -->
+  <div class="submit-area">
+    <div class="submit-topbar">Ready to run the pipeline</div>
+    <div class="submit-body">
+      <div class="submit-instruction">
+        Click <strong>Generate</strong> to build your complete pipeline input.<br>
+        Then <strong>copy it</strong> and <strong>paste into Claude Code</strong> — all 4 agents will run automatically and output your final video prompts.
       </div>
-      <div class="next-hint">Copy → Claude Code → type <span style="color:var(--purple)">/video-prompt-packager</span> → paste. Final prompts will be formatted for <span>Higgsfield</span> / <span>Seedance 2</span> / <span>Kling</span> / <span>VEO</span>.</div>
+      <button class="btn-generate" onclick="generate()">Generate Pipeline Input →</button>
+      <div class="output-wrap" id="output-wrap">
+        <div class="output-panel">
+          <div class="output-topbar">
+            <span class="output-label">✓ Pipeline Input Ready</span>
+            <button class="btn-copy" id="copy-btn" onclick="copyOutput(this)">⌘ Copy</button>
+          </div>
+          <div class="output-body" id="output-body"></div>
+        </div>
+        <div class="paste-hint">
+          <strong>Next step:</strong> Copy the text above → switch to Claude Code → paste it into the chat.<br>
+          Claude will run all 4 agents and output production-ready prompts for every shot.
+        </div>
+      </div>
     </div>
   </div>
 
 </div>
-
 <script>
-  // ─── State ────────────────────────────────────────────
-  const state = { brief: '', vls: '', currentStep: 1 };
-
-  // ─── Navigation ───────────────────────────────────────
-  function goToStep(n) {
-    [1,2,3,4].forEach(i => {
-      document.getElementById('step-'+i).classList.toggle('hidden', i !== n);
-      const tab = document.getElementById('tab-'+i);
-      tab.classList.remove('active','done');
-      if (i === n) tab.classList.add('active');
-      else if (i < n) tab.classList.add('done');
-    });
-    state.currentStep = n;
-    if (n === 3) buildCinematographerInput();
-    window.scrollTo(0, 0);
-  }
-
-  // ─── Card / Pill selection ─────────────────────────────
   function selectCard(el) {
-    const group = el.dataset.group;
-    document.querySelectorAll(`.card[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll(`.card[data-group="${el.dataset.group}"]`).forEach(c => c.classList.remove('selected'));
     el.classList.add('selected');
   }
   function selectPill(el) {
-    const group = el.dataset.group;
-    document.querySelectorAll(`.pill[data-group="${group}"]`).forEach(p => p.classList.remove('selected'));
+    document.querySelectorAll(`.pill[data-group="${el.dataset.group}"]`).forEach(p => p.classList.remove('selected'));
     el.classList.add('selected');
   }
-
-  function getSelected(group) {
+  function getVal(group) {
     const el = document.querySelector(`[data-group="${group}"].selected`);
     return el ? el.dataset.value : null;
   }
 
-  // ─── Generate Brief ────────────────────────────────────
-  function generateBrief() {
-    let valid = true;
+  function generate() {
+    const appname   = document.getElementById('appname').value.trim();
+    const appdesc   = document.getElementById('appdesc').value.trim();
+    const audience  = document.getElementById('audience').value.trim();
+    const keymsg    = document.getElementById('keymessage').value.trim();
+    const feature   = document.getElementById('feature').value.trim();
+    const platform  = getVal('platform');
+    const platformEl = document.querySelector('[data-group="platform"].selected');
+    const ratio     = platformEl ? platformEl.dataset.ratio : '';
+    const res       = platformEl ? platformEl.dataset.res : '';
+    const length    = getVal('length');
+    const videotype = getVal('videotype');
+    const tone      = getVal('tone');
+    const style     = getVal('style');
 
-    const appname = document.getElementById('appname').value.trim();
-    const appdesc = document.getElementById('appdesc').value.trim();
-    const audience = document.getElementById('audience').value.trim();
-    const keymessage = document.getElementById('keymessage').value.trim();
-    const feature = document.getElementById('feature').value.trim();
-    const platform = getSelected('platform');
-    const platformCard = document.querySelector(`[data-group="platform"].selected`);
-    const platformSpec = platformCard ? platformCard.dataset.spec : '';
-    const length = getSelected('length');
-    const videotype = getSelected('videotype');
-    const tone = getSelected('tone');
+    const missing = [];
+    if (!appname)   missing.push('App name');
+    if (!appdesc)   missing.push('App description');
+    if (!platform)  missing.push('Platform');
+    if (!length)    missing.push('Video length');
+    if (!videotype) missing.push('Video type');
+    if (!tone)      missing.push('Tone');
+    if (!style)     missing.push('Visual style');
+    if (!audience)  missing.push('Target audience');
+    if (!keymsg)    missing.push('Key message');
+    if (missing.length) { alert('Please complete: ' + missing.join(', ')); return; }
 
-    // Validation
-    ['fg-appname','fg-appdesc','fg-audience','fg-keymessage'].forEach(id => {
-      document.getElementById(id).classList.remove('error');
-      const existing = document.querySelector('#'+id+' .error-msg');
-      if (existing) existing.remove();
-    });
+    const output = `RUN VIDEO PIPELINE — ALL 4 AGENTS
 
-    if (!appname) { markError('fg-appname', 'App name is required'); valid = false; }
-    if (!appdesc) { markError('fg-appdesc', 'Description is required'); valid = false; }
-    if (!audience) { markError('fg-audience', 'Target audience is required'); valid = false; }
-    if (!keymessage) { markError('fg-keymessage', 'Key message is required'); valid = false; }
-    if (!platform || !length || !videotype || !tone) {
-      if (!valid === false) valid = false;
-      valid = false;
-      alert('Please select a Platform, Video Length, Video Type, and Tone.');
-    }
-    if (!valid) return;
+You are running a 4-agent video production pipeline. Using the brief below, execute ALL agents in sequence:
+1. Creative Director — build the creative brief
+2. Style Director — lock the visual language
+3. Cinematographer — write the full shot list (all 15 fields per shot, no shortcuts)
+4. Prompt Packager — output production-ready prompts for every shot, formatted for the assigned model
 
-    // Shot count targets
-    const shotMap = { '15s': '8–12', '30s': '15–22', '60s': '28–40', '90s+': '55–70' };
-    const avgMap  = { '15s': '1.5s', '30s': '1.6s', '60s': '1.7s', '90s+': '1.8s' };
-    const durMap  = { '15s': '15 seconds', '30s': '30 seconds', '60s': '60 seconds', '90s+': '90+ seconds' };
+Output all 4 results in full. Do not stop early.
 
-    // Arc timestamps
-    const arcs = {
-      '15s': '0:00–0:03 → HOOK\n0:03–0:08 → BUILD\n0:08–0:12 → PLANT\n0:12–0:15 → PAYOFF',
-      '30s': '0:00–0:04 → HOOK\n0:04–0:12 → BUILD\n0:12–0:22 → PLANT\n0:22–0:30 → PAYOFF',
-      '60s': '0:00–0:05 → HOOK\n0:05–0:20 → BUILD\n0:20–0:45 → PLANT\n0:45–1:00 → PAYOFF',
-      '90s+': '0:00–0:06 → HOOK\n0:06–0:30 → BUILD\n0:30–1:10 → PLANT\n1:10–1:30 → PAYOFF',
-    };
-
-    const toneDirectives = {
-      'PREMIUM MINIMAL': ['No music before 3 seconds', 'Maximum 1 text overlay in the entire video', 'Negative space is intentional — never fill it', 'Subject never performs for the camera'],
-      'CHAOTIC ENERGY': ['Cuts every 0.5–1.5s in the sabotage phase', 'Music enters at second 1 or before', 'At least 3 whip-pan or snap-zoom transitions', 'Color contrast is pushed 20% beyond natural'],
-      'WARM RELATABLE': ['Natural lighting only — no studio fills', 'Subject is never perfect (half-empty cup, messy hair)', 'No text overlays until payoff beat', 'Audio: ambient room tone before music enters'],
-      'DARK & TENSE': ['Silence or sparse sound design for the first half', 'Color grade leans cold — no warm tones until payoff', 'Camera movement is slow and deliberate — no fast cuts in build', 'Subject\'s face stays neutral or guarded until the break'],
-      'PLAYFUL & ABSURD': ['Sound design is exaggerated 30% beyond realistic', 'At least one impossible or physics-defying moment', 'Expressions are 2x real — eyebrows, jaw, posture all amplified', 'Music is upbeat and enters within first 2 seconds'],
-      'ASPIRATIONAL': ['Every environment is slightly better than real life', 'Subject is effortlessly competent — never struggling', 'Golden hour or blue hour lighting preferred', 'Product appears in the aspirational state, not the need state'],
-    };
-
-    const dirs = toneDirectives[tone] || ['No music before 3 seconds', 'Keep color grade consistent', 'Natural pacing', 'Avoid generic stock footage feel'];
-
-    const brief = `════════════════════════════════════════════════════════
-CREATIVE BRIEF — AGENT 01 OUTPUT
+════════════════════════════════════════════════════════
+PROJECT INPUTS
 ════════════════════════════════════════════════════════
 
-PROJECT TITLE
-${appname} — ${videotype.split(' ')[0].charAt(0) + videotype.split(' ')[0].slice(1).toLowerCase()} ${platform.split('/')[0].trim()} Video
+APP NAME       : ${appname}
+DESCRIPTION    : ${appdesc}
+PLATFORM       : ${platform}
+ASPECT RATIO   : ${ratio}
+RESOLUTION     : ${res}
+VIDEO LENGTH   : ${length}
+VIDEO TYPE     : ${videotype}
+TONE           : ${tone}
+VISUAL STYLE   : ${style}
+TARGET AUDIENCE: ${audience}
+KEY MESSAGE    : ${keymsg}
+FEATURE        : ${feature || 'None — build around core emotional benefit'}
 
-────────────────────────────────────────────────────────
+════════════════════════════════════════════════════════
+AGENT 01 — CREATIVE DIRECTOR
+════════════════════════════════════════════════════════
 
-PLATFORM & SPECS
-Platform    : ${platform}
-Aspect Ratio: ${platformSpec.split('—')[0].trim()}
-Resolution  : ${platformSpec.split('—')[1] ? platformSpec.split('—')[1].trim() : 'See platform spec'}
-Safe Zone   : Center 80% of frame — avoid top and bottom 10% for text/UI
-Duration    : ${durMap[length]}
+Using the inputs above, output a complete Creative Brief:
+- PROJECT TITLE
+- PLATFORM & SPECS (with safe zone)
+- VIDEO TYPE
+- CONCEPT (2-3 sentences, specific not generic)
+- EMOTIONAL ARC (timestamps that add up exactly to ${length})
+- HOOK STRATEGY (type + execution — make it stop a scrolling thumb cold)
+- TONE PROFILE (4 specific directives for this project)
+- TARGET AUDIENCE (+ inferred psychological pain point)
+- KEY MESSAGE
+- SHOT COUNT TARGET (based on ${length})
+- MUSIC DIRECTION (genre + BPM + entry point)
+- HANDOFF NOTES FOR STYLE DIRECTOR
 
-────────────────────────────────────────────────────────
+STEALTH PROMO rule: product must not appear before the halfway point.
+Hook must be specific to this app and audience — generic hooks are a failure state.
 
-APP / PRODUCT
-Name        : ${appname}
-Description : ${appdesc}
+════════════════════════════════════════════════════════
+AGENT 02 — STYLE DIRECTOR
+════════════════════════════════════════════════════════
 
-────────────────────────────────────────────────────────
+Selected style: ${style}
 
-VIDEO TYPE
-${videotype}
+Using the Creative Brief from Agent 01, output the full Visual Language Spec:
+- COLOR WORLD (3-4 specific palette anchors, grade direction, forbidden colors)
+- LENS & CAMERA (type, focal range, depth of field, artifacts, fps)
+- LIGHTING (source, quality, time of day, 3 mood anchors, what to avoid)
+- MOTION RULES (movement types, energy, transitions, slow-mo use)
+- TEXTURE & FINISH (grain %, artifacts, surface quality, era feel)
+- SOUND DESIGN LANGUAGE (4 specific directives)
+- VISUAL REFERENCES (3 specific scene references — film + year + what it demonstrates)
+- MODEL ROUTING (Higgsfield / Seedance 2 / Kling / VEO — with exact shot types for each)
+- STYLE ANCHOR PHRASE (single phrase appended to every prompt)
+- HANDOFF NOTES FOR CINEMATOGRAPHER
 
-────────────────────────────────────────────────────────
+References beat adjectives. Name specific scenes. "Moody" is not acceptable.
+Model routing is decided here — not in Agent 04.
 
-CONCEPT
-A ${length} ${videotype.toLowerCase()} for ${appname} on ${platform.split('/')[0].trim()}.
-The video targets ${audience} and leaves them feeling: "${keymessage}"
-${feature ? 'Key feature to highlight: ' + feature : 'No specific feature locked — build around the core emotional benefit.'}
+════════════════════════════════════════════════════════
+AGENT 03 — CINEMATOGRAPHER
+════════════════════════════════════════════════════════
 
-────────────────────────────────────────────────────────
+Using the Creative Brief and Visual Language Spec, build the complete shot list.
 
-EMOTIONAL ARC
-${arcs[length]}
+Shot count targets: 15s=8-12 shots, 30s=15-22 shots, 60s=28-40 shots, 90s+=45-60 shots
+Distribution: 35% CU/ECU, 30% MS/MCU, 20% WS/MWS, 15% INSERT/POV/CUT
 
-────────────────────────────────────────────────────────
+Every shot uses this exact structure — no blanks, no TBDs:
 
-HOOK STRATEGY
-Type        : [To be determined by Style Director based on visual style]
-Execution   : The first 3 seconds must stop a scrolling thumb cold.
-              Build from the audience insight: ${audience}
+SHOT [number] — [HOOK / BUILD / PLANT / PAYOFF]
+DURATION      : [seconds]
+SHOT TYPE     : [ECU/CU/MCU/MS/MWS/WS/EWS/POV/OTS/INSERT/CUT/MATCH]
+LENS          : [focal length + aperture]
+CAMERA        : [movement + speed + direction]
+FRAME         : [exact composition — what occupies each third]
+SUBJECT       : [precise physical description — no names]
+ACTION        : [what subject is doing at this exact moment]
+EXPRESSION    : [emotional micro-detail — pupils, jaw, brow, posture]
+LIGHTING      : [source / quality / direction / color temp / shadows]
+BACKGROUND    : [what is behind, focus level, movement]
+FOREGROUND    : [anything between lens and subject — or "none"]
+AUDIO         : [dialogue / VO / sound design / music state]
+EMOTIONAL BEAT: [one precise emotion the viewer feels]
+MODEL         : [Higgsfield / Seedance 2 / Kling / VEO]
+PROMPT NOTES  : [anything unusual the Prompt Packager must know]
 
-────────────────────────────────────────────────────────
+Rules:
+- Shot 1 executes the Hook Strategy exactly — no establishing shots
+- STEALTH PROMO: product not visible before halfway
+- Final shot holds 1.5–2.5s longer, no hard cut to black
+- Subject description locked in Shot 1, copy-pasted exactly every subsequent shot
 
-TONE PROFILE
-Tone: ${tone}
+════════════════════════════════════════════════════════
+AGENT 04 — PROMPT PACKAGER
+════════════════════════════════════════════════════════
 
-Directives:
-— ${dirs[0]}
-— ${dirs[1]}
-— ${dirs[2]}
-— ${dirs[3]}
+For every shot in the shot list, output a production-ready prompt:
 
-────────────────────────────────────────────────────────
+SHOT [number] — [ARC PHASE]
+MODEL        : [model]
+DURATION     : [seconds]
+ASPECT RATIO : ${ratio}
+PROMPT:
+[Full prompt for the assigned model — apply style anchor phrase as last line]
 
-TARGET AUDIENCE
-${audience}
-Pain point: [Style Director to identify based on app description and audience]
+NEGATIVE PROMPT:
+[3-5 specific items tailored to this shot's failure risk]
 
-────────────────────────────────────────────────────────
+CONSISTENCY NOTE:
+[Character anchor for Kling / Environment persistence for same-scene shots]
 
-KEY MESSAGE
-${keymessage}
+Model grammars:
+- HIGGSFIELD (4-6 sentences): Environment+lighting → Subject+position → Physics: direction/speed/arc/impact → Camera → Secondary reactions → Audio
+- SEEDANCE 2 (3-5 sentences): Time+light+environment → Subject as casting+costume brief → Natural action → Micro-detail → Camera+lens → Atmosphere+audio
+- KLING (3-5 sentences): Locked character anchor (copy-paste verbatim) → Anatomical expression → Environment → Camera → Style name stated explicitly → Audio
+- VEO (2-4 sentences): Cinematic camera move → Subject micro-expression detail → Scene atmosphere → Sound design layered
 
-────────────────────────────────────────────────────────
+End with DELIVERY SUMMARY:
+- Total shots per model
+- Generation order (Kling → Seedance 2 → Higgsfield → VEO)
+- Locked character anchor descriptions for the editor`;
 
-SHOT COUNT TARGET
-Total shots       : ${shotMap[length]} shots
-Avg shot duration : ${avgMap[length]} per shot
-Cut rhythm        : Slow open → accelerating through build → rapid at payoff
-
-────────────────────────────────────────────────────────
-
-MUSIC DIRECTION
-[To be inferred by Style Director from tone profile: ${tone}]
-Entry point should complement the hook strategy.
-
-────────────────────────────────────────────────────────
-
-HANDOFF NOTES FOR STYLE DIRECTOR
-App: ${appname} — ${appdesc}
-Video type is ${videotype} — style must support the credibility of that format.
-${feature ? 'The app UI feature to highlight: ' + feature + ' — style must make this feel natural, not staged.' : 'No hard product placement — style should elevate the lifestyle angle.'}
-
-════════════════════════════════════════════════════════`;
-
-    state.brief = brief;
-    document.getElementById('brief-text').textContent = brief;
-    document.getElementById('brief-output').classList.remove('hidden');
-    document.getElementById('brief-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('output-body').textContent = output;
+    document.getElementById('output-wrap').style.display = 'block';
+    document.getElementById('output-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
-  // ─── Generate VLS ─────────────────────────────────────
-  function generateVLS() {
-    const style = getSelected('style');
-    if (!style) { alert('Please select a visual style.'); return; }
-
-    const modelRouting = {
-      'R1 — CINEMATIC REALISM':     { h: 'Action sequences, kinetic camera moves, wide establishing shots', s: 'Human performance, emotional close-ups, lifestyle moments', k: 'Character consistency, product reveal shots, face detail' },
-      'R2 — UGC / NATIVE CONTENT':  { h: 'Not recommended — breaks UGC authenticity', s: 'Primary model — all shots. Handheld lifestyle, natural performance', k: 'Character consistency if needed across multi-shot sequences' },
-      'R3 — DOCUMENTARY':           { h: 'Not recommended', s: 'Primary model — observational shots, natural moments, b-roll', k: 'Talking-head sequences requiring consistent subject framing' },
-      'R4 — NOIR / NEO-NOIR':       { h: 'High-energy action within the noir world, rain effects, impact', s: 'Atmospheric slow scenes, character walking, environmental mood', k: 'Close-up face detail in shadow, consistent character across scenes' },
-      'W1 — HISTORICAL / PERIOD':   { h: 'Crowd scenes, period action, kinetic period-specific movement', s: 'Character performance, period-accurate lifestyle moments', k: 'Consistent period character appearance across all shots' },
-      'W2 — CYBERPUNK / NEO-FUTURE':{ h: 'High-motion neon environments, crashes, kinetic chase energy', s: 'Human moments within the cyberpunk world, UI interactions', k: 'Character consistency, holographic UI reveals, stylized close-ups' },
-      'W3 — BLACK MIRROR / NEAR-FUTURE':{ h: 'Not primary — minimal motion', s: 'Human-tech interaction, subtle lifestyle in sterile environments', k: 'Tech reveals, screen moments, consistent clinical environment shots' },
-      'A1 — DISNEY / PIXAR 3D':     { h: 'Not applicable — animation', s: 'Not applicable — animation', k: 'Primary model — all animated shots. Character consistency critical.' },
-      'A2 — STUDIO GHIBLI':         { h: 'Not applicable — animation', s: 'Not applicable — animation', k: 'Primary model — all Ghibli-style shots.' },
-      'A3 — ANIME':                 { h: 'High-impact action cuts, kinetic battle or chase sequences', s: 'Not recommended for anime style', k: 'Primary model — character shots, emotional beats, sakuga moments' },
-      'A4 — PICASSO / CUBIST':      { h: 'Not applicable', s: 'Not applicable', k: 'Primary model — all abstract stylized shots' },
-      'A5 — MOTION GRAPHICS':       { h: 'Not applicable', s: 'Not applicable', k: 'Primary model — all motion graphic and graphic design shots' },
-      'D1 — NOLAN MODE':            { h: 'Practical action sequences, kinetic tension building, wide IMAX-scale shots', s: 'Human intimate moments, emotional performance close-ups', k: 'Character consistency across the non-linear structure' },
-      'D2 — FINCHER MODE':          { h: 'Not recommended — Fincher avoids handheld chaos', s: 'Controlled lifestyle shots, precise human behavior', k: 'Primary model — locked shots, precise character placement, face detail' },
-      'D3 — WES ANDERSON MODE':     { h: 'Not recommended — breaks symmetry grammar', s: 'Not primary', k: 'Primary model — all symmetrical shots, character consistency, deadpan' },
-      'D4 — A24 MODE':              { h: 'Not primary', s: 'Primary model — handheld naturalism, uncomfortable close proximity', k: 'Consistent character across the intimate sequence' },
-    };
-
-    const routing = modelRouting[style] || { h: 'Kinetic and physics-heavy shots', s: 'Human performance and lifestyle shots', k: 'Character consistency and stylized shots' };
-
-    const vls = `════════════════════════════════════════════════════════
-VISUAL LANGUAGE SPEC — AGENT 02 OUTPUT
-════════════════════════════════════════════════════════
-
-Style       : ${style}
-Project     : From Creative Brief above
-
-────────────────────────────────────────────────────────
-
-COLOR WORLD
-[To be fully specified by Claude with Agent 02 prompt — based on ${style}]
-Foundation  : See style reference films for color direction
-Forbidden   : Any color that breaks the established style world
-
-────────────────────────────────────────────────────────
-
-LENS & CAMERA
-[To be specified by Claude based on ${style} rules]
-
-────────────────────────────────────────────────────────
-
-LIGHTING
-[To be specified by Claude based on ${style} references]
-
-────────────────────────────────────────────────────────
-
-MOTION RULES
-[To be specified by Claude based on ${style} movement grammar]
-
-────────────────────────────────────────────────────────
-
-TEXTURE & FINISH
-[To be specified by Claude based on ${style} aesthetic]
-
-────────────────────────────────────────────────────────
-
-SOUND DESIGN LANGUAGE
-[To be specified by Claude — aligned with tone profile from Agent 01]
-
-────────────────────────────────────────────────────────
-
-VISUAL REFERENCES — ${style}
-[Claude will provide 3 specific scene references from the style library]
-
-────────────────────────────────────────────────────────
-
-MODEL ROUTING
-Higgsfield  : ${routing.h}
-Seedance 2  : ${routing.s}
-Kling       : ${routing.k}
-VEO         : Emotional close-ups, micro-expression detail, slow cinematic moments
-
-────────────────────────────────────────────────────────
-
-NOTE FOR CINEMATOGRAPHER
-Style selected: ${style}
-All shot decisions must respect this visual world.
-Model routing above defines which AI tool handles each shot type.
-
-════════════════════════════════════════════════════════`;
-
-    state.vls = vls;
-    document.getElementById('vls-text').textContent = vls;
-    document.getElementById('vls-output').classList.remove('hidden');
-    document.getElementById('vls-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ─── Build Cinematographer Input ──────────────────────
-  function buildCinematographerInput() {
-    const combined = state.brief + '\n\n' + state.vls + `
-
-════════════════════════════════════════════════════════
-INSTRUCTION FOR CINEMATOGRAPHER (AGENT 03)
-════════════════════════════════════════════════════════
-Using the Creative Brief and Visual Language Spec above,
-build the complete shot list. Apply all rules from Agent 03.
-Every shot needs all 15 fields. No blanks. No TBDs.
-════════════════════════════════════════════════════════`;
-    document.getElementById('cine-input').textContent = combined;
-  }
-
-  // ─── Build Packager Input ─────────────────────────────
-  function generatePackagerInput() {
-    const shotlist = document.getElementById('shotlist-input').value.trim();
-    if (!shotlist) { alert('Please paste the shot list from Agent 03.'); return; }
-
-    const full = state.brief + '\n\n' + state.vls + '\n\n' + shotlist + `
-
-════════════════════════════════════════════════════════
-INSTRUCTION FOR PROMPT PACKAGER (AGENT 04)
-════════════════════════════════════════════════════════
-Using the Creative Brief, Visual Language Spec, and Shot List above,
-generate a production-ready video prompt for every shot.
-Format each prompt for its assigned model: Higgsfield / Seedance 2 / Kling / VEO.
-Include NEGATIVE PROMPT and CONSISTENCY NOTE for every shot.
-End with the DELIVERY SUMMARY.
-════════════════════════════════════════════════════════`;
-
-    document.getElementById('packager-text').textContent = full;
-    document.getElementById('packager-output').classList.remove('hidden');
-    document.getElementById('packager-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }
-
-  // ─── Helpers ──────────────────────────────────────────
-  function markError(id, msg) {
-    const fg = document.getElementById(id);
-    fg.classList.add('error');
-    const err = document.createElement('div');
-    err.className = 'error-msg';
-    err.textContent = msg;
-    fg.appendChild(err);
-  }
-
-  function copyOutput(id, btn) {
-    const text = document.getElementById(id).textContent;
+  function copyOutput(btn) {
+    const text = document.getElementById('output-body').textContent;
     navigator.clipboard.writeText(text).then(() => {
-      btn.textContent = '✓ Copied!';
-      btn.classList.add('copied');
+      btn.textContent = '✓ Copied!'; btn.classList.add('copied');
       setTimeout(() => { btn.textContent = '⌘ Copy'; btn.classList.remove('copied'); }, 2000);
     });
   }
